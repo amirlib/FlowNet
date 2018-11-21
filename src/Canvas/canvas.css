@@ -4,3 +4,7 @@
     width: 700px;
     height: 100%;
 }
+
+line {
+    marker-end: url(#arrow);
+}

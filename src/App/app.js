@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import * as lib from '../Canvas/lib'
+import * as lib from '../lib'
 import Canvas from '../Canvas/canvas.js';
 import './app.css';
 
@@ -40,7 +40,10 @@ class App extends Component {
         this.setState({
             action: 'stop'
         });
-        lib.buttonsHandler(false, true, true);
+        lib.buttonsHandler(false, false, true);
+        if (this.state.flowArr.length < 3) {
+            document.getElementById('undo').disabled = true;
+        }
     }
 
     deleteLastValueInFlowArr() {

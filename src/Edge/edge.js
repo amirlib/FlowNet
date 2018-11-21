@@ -6,8 +6,10 @@ class Edge extends Component {
         super(props);
         this.state = {
             nodeOut: this.props.edgeObj.nodeOut,
+            nodeOutID: this.props.edgeObj.nodeOutID,
             corX: this.props.edgeObj.corX,
-            corY: this.props.edgeObj.corY
+            corY: this.props.edgeObj.corY,
+            nodeInID: this.props.edgeObj.nodeInID
         }
     }
 
@@ -15,7 +17,8 @@ class Edge extends Component {
         if (this.props.edgeObj.corX !== this.state.corX || this.props.edgeObj.corY !== this.state.corY) {
             this.setState({
                 corX: this.props.edgeObj.corX,
-                corY: this.props.edgeObj.corY
+                corY: this.props.edgeObj.corY,
+                nodeInID: this.props.edgeObj.ID
             });
         }
     }
@@ -24,7 +27,7 @@ class Edge extends Component {
         return (
             <line x1={this.state.nodeOut.corX} y1={this.state.nodeOut.corY} x2={this.state.corX} y2={this.state.corY} style={{
                 stroke: 'black',
-                strokeWidth: 1
+                strokeWidth: '1'
             }} />
         );
     }

@@ -1,3 +1,5 @@
+import * as final from './final';
+
 export function nodeOnNode(flowArr) {
     let nodeObj = flowArr[flowArr.length - 1];
     for (let i = 0; i < flowArr.length - 1; i++) {
@@ -20,8 +22,8 @@ export function mouseOnNode(corX, corY, flowArr) {
 }
 
 export function mouseOnCanvasCorX(mouseCorX) {
-    if (document.body.clientWidth > 750) {
-        return mouseCorX - (document.body.clientWidth - 750) / 2;
+    if (document.body.clientWidth > final.mainWidth) {
+        return mouseCorX - (document.body.clientWidth - final.mainWidth) / 2;
     }
     return mouseCorX;
 }
@@ -32,11 +34,11 @@ export function buttonsHandler(newNode, undo, stop) {
     document.getElementById('stop').disabled = stop;
 }
 
-export function searchSameEdges(flowArr, nodeID) {
+export function searchSameEdges(flowArr, nodeInID) {
     let edgeObj = flowArr[flowArr.length - 1];
     for (let i = 0; i < flowArr.length - 1; i++) {
         if (flowArr[i].objectType === 'edge' && flowArr[i].nodeOut === edgeObj.nodeOut) {
-            if (flowArr[i].corX === flowArr[nodeID].corX && flowArr[i].corY === flowArr[nodeID].corY) {
+            if (flowArr[i].nodeInID === nodeInID) {
                 return true;
             }
         }
@@ -48,7 +50,7 @@ export function setNode(corX, corY, flowArr) {
     let nodeObj = {
         corX,
         corY,
-        radius: 30,
+        radius: final.nodeRadius,
         objectType: 'node'
     };
     flowArr.push(nodeObj);
