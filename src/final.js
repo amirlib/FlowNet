@@ -1,3 +1,3 @@
-export const headerHeight = 50;
-export const mainWidth = 750;
-export const nodeRadius = 30;
+export const headerHeight = 50; //The height of header in the page
+export const mainWidth = 750; //The width of main in the page
+export const nodeRadius = 30; //The radius of node

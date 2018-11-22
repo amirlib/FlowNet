@@ -7,18 +7,22 @@ class Node extends Component {
         this.nodeMouseOut = this.nodeMouseOut.bind(this);
         this.nodeMouseEnter = this.nodeMouseEnter.bind(this);
         this.state = {
-            corX: this.props.nodeObj.corX,
-            corY: this.props.nodeObj.corY,
-            radius: this.props.nodeObj.radius
+            corX: this.props.nodeObj.corX, //The X coordinate of the center of node
+            corY: this.props.nodeObj.corY, //The Y coordinate of the center of node
+            radius: this.props.nodeObj.radius //The radius of node
         };
     }
-
+    /**
+     * Method of the mouse enter event on the Node component
+     */
     nodeMouseEnter() {
-        this.props.getIDFromNode(this.props.id);
+        this.props.getIDFromNode(this.props.id); //Send the ID node to the Canvas component
     }
-
+    /**
+     * Method of the mouse Out event on the Node component
+     */
     nodeMouseOut() {
-        this.props.getIDFromNode(undefined);
+        this.props.getIDFromNode(undefined); //Send undefined as an ID node to the Canvas component
     }
 
     componentDidUpdate() {

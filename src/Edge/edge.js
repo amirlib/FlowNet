@@ -5,11 +5,11 @@ class Edge extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            nodeOut: this.props.edgeObj.nodeOut,
-            nodeOutID: this.props.edgeObj.nodeOutID,
-            corX: this.props.edgeObj.corX,
-            corY: this.props.edgeObj.corY,
-            nodeInID: this.props.edgeObj.nodeInID
+            startNode: this.props.edgeObj.startNode, //The start node object of the edge
+            startNodeID: this.props.edgeObj.startNodeID, //The ID of start node
+            corX: this.props.edgeObj.corX, //The X coordinate of the end of the edge
+            corY: this.props.edgeObj.corY, //The Y coordinate of the end of the edge
+            endNodeID: this.props.edgeObj.endNodeID //The ID of end node
         }
     }
 
@@ -18,14 +18,14 @@ class Edge extends Component {
             this.setState({
                 corX: this.props.edgeObj.corX,
                 corY: this.props.edgeObj.corY,
-                nodeInID: this.props.edgeObj.ID
+                endNodeID: this.props.edgeObj.endNodeID
             });
         }
     }
 
     render() {
         return (
-            <line x1={this.state.nodeOut.corX} y1={this.state.nodeOut.corY} x2={this.state.corX} y2={this.state.corY} style={{
+            <line x1={this.state.startNode.corX} y1={this.state.startNode.corY} x2={this.state.corX} y2={this.state.corY} style={{
                 stroke: 'black',
                 strokeWidth: '1'
             }} />
