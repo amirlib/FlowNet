@@ -33,10 +33,6 @@ class App extends Component {
 
   stopClick() {
     this.deleteLastValueInFlowArr();
-    lib.buttonsHandler(false, false, true);
-    if (this.state.flowArr.length < 3) {
-      document.getElementById('undo').disabled = true;
-    }
     this.setState({ action: 'stop' });
   }
 
@@ -47,7 +43,16 @@ class App extends Component {
   }
 
   getActionFromCanvas(action) {
-    this.setState({ action });
+    if (action === 'none') {
+      if (this.state.flowArr.length < 3) {
+        console.log(`App getActionFromCanvas: NONE - less than 3`);
+        lib.buttonsHandler(false, true, true);
+      } else {
+        console.log(`App getActionFromCanvas: NONE - more or equal to 3`);
+        lib.buttonsHandler(false, false, true);
+      }
+      this.setState({ action });
+    }
   }
 
   getFlowArrFromCanvas(flowArr) {
@@ -64,7 +69,7 @@ class App extends Component {
     console.log(`App render`);
     return (
       <div className='App'>
-        <Canvas flowArr={this.state.flowArr} action={this.state.action} actionFromCanvas={this.getActionFromCanvas} flowapFromCanvas={this.getFlowArrFromCanvas} />
+        <Canvas flowArr={this.state.flowArr} action={this.state.action} actionFromCanvas={this.getActionFromCanvas} flowappFromCanvas={this.getFlowArrFromCanvas} />
         <div className='menu'>
           <button id='newNode' onClick={this.newNodeClick}>Node</button>
           <button id='undo' onClick={this.undoClick}>Undo</button>

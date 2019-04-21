@@ -53,13 +53,13 @@ export function buttonsHandler(newNode, undo, stop) {
 /**
  * Search for Matching edges: an existing one, and a new one, that is in progress of creating
  * @param {Array} flowArr 
- * @param {number} endNodeID - The ID of end node 
+ * @param {number} toID - The ID of end node 
  */
-export function searchSameEdges(flowArr, endNodeID) {
+export function searchSameEdges(flowArr, toID) {
     let edgeObj = flowArr[flowArr.length - 1];
     for (let i = 0; i < flowArr.length - 1; i++) {
-        if (flowArr[i].objectType === 'edge' && flowArr[i].startNode === edgeObj.startNode) {
-            if (flowArr[i].endNodeID === endNodeID) {
+        if (flowArr[i].objectType === 'edge' && flowArr[i].from === edgeObj.from) {
+            if (flowArr[i].toID === toID) {
                 return true;
             }
         }
