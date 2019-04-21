@@ -11,72 +11,50 @@ class App extends Component {
     this.newNodeClick = this.newNodeClick.bind(this);
     this.getActionFromCanvas = this.getActionFromCanvas.bind(this);
     this.getFlowArrFromCanvas = this.getFlowArrFromCanvas.bind(this);
-    this.deleteLastValueInFlowArr = this.deleteLastValueInFlowArr.bind(this);
     this.state = {
-      flowArr: [], //Array of all the nodes and edges of the network 
-      action: 'none' //System will know if there is a new node action or not
+      flowArr: [], 
+      action: 'none'
     };
   }
-  /**
-   * When the new node button clicked, create new node
-   */
-  newNodeClick(event) {
-    // let flowArr = this.state.flowArr;
-    // flowArr = lib.setNode(event.pageX, event.pageY, flowArr); //Send the Coordinates
+
+  newNodeClick() {
+    lib.buttonsHandler(true, true, false);
     this.setState({
-      // flowArr,
       action: 'node'
     });
-    lib.buttonsHandler(true, true, false); //Change the disable attribute on buttons
   }
-  /**
-   * When the undo button clicked, delete the last object in flowArr
-   */
+
   undoClick() {
     this.deleteLastValueInFlowArr();
-    if (this.state.flowArr.length < 3) { //The array must have the 2 default nodes
+    if (this.state.flowArr.length < 3) {
       document.getElementById('undo').disabled = true;
     }
   }
-  /**
-   * When the stop button clicked, stop the process of creating new object and delete it from flowArr
-   */
+
   stopClick() {
     this.deleteLastValueInFlowArr();
-    this.setState({
-      action: 'stop' //Update the state of action
-    });
-    lib.buttonsHandler(false, false, true); //Change the disable attribute on buttons
-    if (this.state.flowArr.length < 3) { //The array must have the 2 default nodes
+    lib.buttonsHandler(false, false, true);
+    if (this.state.flowArr.length < 3) {
       document.getElementById('undo').disabled = true;
     }
+    this.setState({ action: 'stop' });
   }
-  /**
-   * Delete the last object in flowArr
-   */
+
   deleteLastValueInFlowArr() {
     let flowArr = this.state.flowArr;
     flowArr.pop();
     this.setState({ flowArr });
   }
-  /**
-   * Receive an updated state: 'action' from Canvas component, and update it in App component
-   * @param {string} action indicates if there is a new node action or not
-   */
+
   getActionFromCanvas(action) {
     this.setState({ action });
   }
-  /**
-   * Receive an updated state: 'flowArr' from Canvas component, and update it in App component
-   * @param {Array} flowArr 
-   */
+
   getFlowArrFromCanvas(flowArr) {
     console.log(`App getFlowArrFromCanvas`);
     this.setState({ flowArr });
   }
-  /**
-   * Set the deafult disable attribute on buttons
-   */
+
   componentDidMount() {
     console.log(`App componentDidMount`);
     lib.buttonsHandler(false, true, true);
@@ -86,7 +64,7 @@ class App extends Component {
     console.log(`App render`);
     return (
       <div className='App'>
-        <Canvas flowArr={this.state.flowArr} action={this.state.action} getActionFromCanvas={this.getActionFromCanvas} CanvasPipelineApp={this.getFlowArrFromCanvas} />
+        <Canvas flowArr={this.state.flowArr} action={this.state.action} actionFromCanvas={this.getActionFromCanvas} flowapFromCanvas={this.getFlowArrFromCanvas} />
         <div className='menu'>
           <button id='newNode' onClick={this.newNodeClick}>Node</button>
           <button id='undo' onClick={this.undoClick}>Undo</button>
