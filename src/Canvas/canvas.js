@@ -21,6 +21,22 @@ class Canvas extends Component {
     };
   }
   /**
+ * Create new edge and saving it information to the array
+ * @param {number} corX - The X coordinate of the center of node
+ * @param {number} corY  - The Y coordinate of the center of node
+ */
+  setNode(corX, corY) {
+    let flowArr = this.state.flowArr;
+    let nodeObj = {
+      corX,
+      corY,
+      radius: final.nodeRadius,
+      objectType: 'node'
+    };
+    flowArr.push(nodeObj);
+    this.setState({ flowArr });
+  }
+  /**
    * Create new edge and saving it information to the array
    * @param {Object} startNode - The start node object of the edge
    * @param {number} startNodeID - The ID of start node
@@ -59,7 +75,7 @@ class Canvas extends Component {
   canvasClick(event) {
     if (this.state.action === 'node' && this.errorNodeClick === false) { //When there is a new node action and no collision between two nodes
       this.props.getActionFromCanvas('none'); //Update the action state - The end of creating node
-      this.props.getFlowArrFromCanvas(this.state.flowArr); //Update the flowArr in the App component
+      this.props.CanvasPipelineApp(this.state.flowArr); //Update the flowArr in the App component
       lib.buttonsHandler(false, false, true);
     } else if (this.nodeID !== undefined && this.edgeClick === false && this.state.action === 'none') { //When there is the first click of the edge (the strat edge)
       let flowArr = this.state.flowArr;
@@ -79,7 +95,7 @@ class Canvas extends Component {
         flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
         flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
         flowArr[flowArr.length - 1].endNodeID = endNodeID; //Update the ID of end node
-        this.props.getFlowArrFromCanvas(this.state.flowArr); //Update the flowArr in the App component
+        this.props.CanvasPipelineApp(this.state.flowArr); //Update the flowArr in the App component
         this.edgeClick = false;
         lib.buttonsHandler(false, false, true);
       }
@@ -99,23 +115,30 @@ class Canvas extends Component {
     console.log(`Canvas componentDidMount`);
     if (this.state.flowArr.length < 3) {
       let flowArr = this.state.flowArr;
-      flowArr = lib.setNode(50, 350, flowArr);
-      flowArr = lib.setNode(650, 350, flowArr);
+      this.setNode(50, 350);
+      this.setNode(650, 350);
       this.setState({ flowArr });
     }
   }
   /**
    * If recived the "stop" action then stop the process of creating new object and delete it from flowArr. Update the state of action from the Canvas component
    */
-  componentDidUpdate() {
-    console.log(`Canvas componentDidUpdate`);
+  componentDidUpdate(prevProps, prevState) {
     if (this.props.action === 'stop') {
+      console.log(`Canvas componentDidUpdate - action: STOP`);
       this.errorNodeClick = true;
       this.edgeClick = false;
       this.nodeID = undefined;
       this.props.getActionFromCanvas('none');
     }
+    if (this.props.action !== this.state.action && this.props.action === 'node') {
+      console.log(`Canvas componentDidUpdate - action: NODE`);
+      let flowArr = this.state.flowArr;
+      this.setNode(350, 350); //Send the Coordinates
+      this.setState({ flowArr });
+    }
     if (this.state.action !== this.props.action) {
+      console.log(`Canvas componentDidUpdate - action`);
       this.setState({
         action: this.props.action
       });

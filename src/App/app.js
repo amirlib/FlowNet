@@ -21,10 +21,10 @@ class App extends Component {
    * When the new node button clicked, create new node
    */
   newNodeClick(event) {
-    let flowArr = this.state.flowArr;
-    flowArr = lib.setNode(event.pageX, event.pageY, flowArr); //Send the Coordinates
+    // let flowArr = this.state.flowArr;
+    // flowArr = lib.setNode(event.pageX, event.pageY, flowArr); //Send the Coordinates
     this.setState({
-      flowArr,
+      // flowArr,
       action: 'node'
     });
     lib.buttonsHandler(true, true, false); //Change the disable attribute on buttons
@@ -71,6 +71,7 @@ class App extends Component {
    * @param {Array} flowArr 
    */
   getFlowArrFromCanvas(flowArr) {
+    console.log(`App getFlowArrFromCanvas`);
     this.setState({ flowArr });
   }
   /**
@@ -85,7 +86,7 @@ class App extends Component {
     console.log(`App render`);
     return (
       <div className='App'>
-        <Canvas flowArr={this.state.flowArr} action={this.state.action} getActionFromCanvas={this.getActionFromCanvas} getFlowArrFromCanvas={this.getFlowArrFromCanvas} />
+        <Canvas flowArr={this.state.flowArr} action={this.state.action} getActionFromCanvas={this.getActionFromCanvas} CanvasPipelineApp={this.getFlowArrFromCanvas} />
         <div className='menu'>
           <button id='newNode' onClick={this.newNodeClick}>Node</button>
           <button id='undo' onClick={this.undoClick}>Undo</button>

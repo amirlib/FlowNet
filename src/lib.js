@@ -66,19 +66,3 @@ export function searchSameEdges(flowArr, endNodeID) {
     }
     return false;
 }
-/**
- * Create new edge and saving it information to the array
- * @param {number} corX - The X coordinate of the center of node
- * @param {number} corY  - The Y coordinate of the center of node
- * @param {Array} flowArr 
- */
-export function setNode(corX, corY, flowArr) {
-    let nodeObj = {
-        corX,
-        corY,
-        radius: final.nodeRadius,
-        objectType: 'node'
-    };
-    flowArr.push(nodeObj);
-    return flowArr;
-}
