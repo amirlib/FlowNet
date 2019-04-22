@@ -5,8 +5,8 @@ class Edge extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      corX: this.props.edgeObj.corX, //The X coordinate of the end of the edge
-      corY: this.props.edgeObj.corY, //The Y coordinate of the end of the edge
+      corX: this.props.edgeObj.corX, //The X coordinate of the end edge
+      corY: this.props.edgeObj.corY, //The Y coordinate of the end edge
       toID: this.props.edgeObj.toID //The ID of end node
     }
   }
