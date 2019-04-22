@@ -7,8 +7,8 @@ class Node extends Component {
     this.nodeMouseOut = this.nodeMouseOut.bind(this);
     this.nodeMouseEnter = this.nodeMouseEnter.bind(this);
     this.state = {
-      corX: this.props.nodeObj.corX, //The X coordinate of the center of node
-      corY: this.props.nodeObj.corY //The Y coordinate of the center of node
+      corX: props.nodeObj.corX, //The X coordinate of the center of node
+      corY: props.nodeObj.corY //The Y coordinate of the center of node
     };
   }
 

@@ -15,7 +15,7 @@ class Canvas extends Component {
     this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
     this.mouseHoverNodeID = undefined; //Which node ID it, while mouse hover on node
     this.state = {
-      flowArr: this.props.flowArr
+      flowArr: props.flowArr
     };
   }
 
@@ -23,7 +23,7 @@ class Canvas extends Component {
     let flowArr = this.state.flowArr;
     let nodeObj = {
       id: flowArr.length,
-      corX,
+      corX, 
       corY,
       radius: final.nodeRadius,
       objectType: 'node'
@@ -32,21 +32,21 @@ class Canvas extends Component {
     this.setState({ flowArr });
   }
 
-  setEdge(from, corX, corY, toID) {
+  setEdge(from) {
     let flowArr = this.state.flowArr;
     let edgeObj = {
       id: flowArr.length,
       from,
-      corX,
-      corY,
-      toID,
+      corX: from.corX,
+      corY: from.corY,
+      toID: from.id,
       objectType: 'edge'
     };
     flowArr.push(edgeObj);
     this.setState({ flowArr });
   }
 
-  identifySituation() {
+  identifySituation(x, y) {
     if (this.props.action === 'node' && this.errorNodeClick === false) {
       return 'final-node';
     }
@@ -54,9 +54,20 @@ class Canvas extends Component {
       return 'starting-edge';
     }
     if (this.props.action === 'none' && this.edgeClick === true) {
-      return 'final-edge';
+      const toID = lib.mouseOnNode(x, y, this.state.flowArr); //Get the ID of node where the mouse is inside
+      if (this.isSafeFinalClick(toID)) { 
+        return 'final-edge';
+      }
     }
     return 'none'
+  }
+
+  isSafeFinalClick(ID) {
+    const flowArr = this.state.flowArr;
+    if (ID === -1 || flowArr[flowArr.length - 1].from.id === ID || lib.searchSameEdges(flowArr, ID) === true) {
+      return false;
+    }
+    return true;
   }
 
   canvasMouseMove(event) {
@@ -70,8 +81,7 @@ class Canvas extends Component {
   }
 
   canvasClick(event) {
-    let flowArr = this.state.flowArr;
-    const situation = this.identifySituation();
+    const situation = this.identifySituation(event.pageX, event.pageY);
     switch (situation) {
       case 'final-node':
         this.errorNodeClick = true;
@@ -80,26 +90,18 @@ class Canvas extends Component {
         break;
       case 'starting-edge':
         this.edgeClick = true;
-        this.setEdge(flowArr[this.mouseHoverNodeID], flowArr[this.mouseHoverNodeID].corX, flowArr[this.mouseHoverNodeID].corY, this.mouseHoverNodeID);
-        this.props.flowappFromCanvas(this.state.flowArr); //Update the flowArr in the App component
+        this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
         lib.buttonsHandler(true, true, false);
         break;
       case 'final-edge':
-        let toID = lib.mouseOnNode(lib.mouseOnCanvasCorX(event.pageX), event.pageY - final.headerHeight, flowArr); //Get the ID of node where the mouse is inside
-        if (toID === -1) {
-          console.log(`Can't make legal edge`);
-        } else if (flowArr[flowArr.length - 1].fromID === toID) {
-          console.log('Same node');
-        } else if (lib.searchSameEdges(flowArr, toID) === true) {
-          console.log('Same edge');
-        } else {
-          flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
-          flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
-          flowArr[flowArr.length - 1].toID = toID; //Update the ID of end node
-          this.props.flowappFromCanvas(this.state.flowArr); //Update the flowArr in the App component
-          this.edgeClick = false;
-          lib.buttonsHandler(false, false, true);
-        }
+        const flowArr = this.state.flowArr;
+        const toID = lib.mouseOnNode(event.pageX, event.pageY, flowArr); //Get the ID of node where the mouse is inside
+        flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
+        flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
+        flowArr[flowArr.length - 1].toID = toID; //Update the ID of end node
+        this.props.flowappFromCanvas(this.state.flowArr); //Update the flowArr in the App component
+        this.edgeClick = false;
+        lib.buttonsHandler(false, false, true);
         break;
       default:
         event.preventDefault();
