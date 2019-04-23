@@ -45,7 +45,9 @@ class Canvas extends Component {
      * Method of the mouse move event on the Canvas component
      */
     canvasMouseMove(event) {
+      console.log(`Canvas canvasMouseMove`);
         if (this.state.action === 'node' || this.edgeClick !== false) { //While there is a new node OR new edge action
+          console.log(`Canvas canvasMouseMove: INSIDE`);
             let flowArr = this.state.flowArr;
             flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
             flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
@@ -57,6 +59,7 @@ class Canvas extends Component {
      * Method of the click event on the Canvas component
      */
     canvasClick(event) {
+      console.log(`Canvas canvasClick`);
         if (this.state.action === 'node' && this.errorNodeClick === false) { //When there is a new node action and no collision between two nodes
             this.props.getActionFromCanvas('none'); //Update the action state - The end of creating node
             this.props.getFlowArrFromCanvas(this.state.flowArr); //Update the flowArr in the App component
@@ -96,6 +99,7 @@ class Canvas extends Component {
      * Set two default nodes. One for the source and second for the sink
      */
     componentWillMount() {
+      console.log(`Canvas componentWillMount`);
         if (this.state.flowArr.length < 3) {
             let flowArr = this.state.flowArr;
             flowArr = lib.setNode(50, 350, flowArr);
@@ -107,6 +111,7 @@ class Canvas extends Component {
      * If recived the "stop" action then stop the process of creating new object and delete it from flowArr. Update the state of action from the Canvas component
      */
     componentDidUpdate() {
+      console.log(`Canvas componentDidUpdate`);
         if (this.props.action === 'stop') {
             this.errorNodeClick = true;
             this.edgeClick = false;
@@ -121,6 +126,7 @@ class Canvas extends Component {
     }
 
     render() {
+      console.log(`Canvas render`);
         return (
             <div className='canvas-root' id='canvas-root' onMouseMove={this.canvasMouseMove} onClick={this.canvasClick}>
                 <svg height='700' width='700'>

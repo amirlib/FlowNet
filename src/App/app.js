@@ -77,10 +77,12 @@ class App extends Component {
      * Set the deafult disable attribute on buttons
      */
     componentDidMount() {
+      console.log(`App componentDidMount`);
         lib.buttonsHandler(false, true, true);
     }
 
     render() {
+      console.log(`App render`);
         return (
             <div className='App'>
                 <Canvas flowArr={this.state.flowArr} action={this.state.action} getActionFromCanvas={this.getActionFromCanvas} getFlowArrFromCanvas={this.getFlowArrFromCanvas} />
