@@ -19,9 +19,7 @@ class App extends Component {
 
   newNodeClick() {
     lib.buttonsHandler(true, true, false);
-    this.setState({
-      action: 'node'
-    });
+    this.setState({ action: 'node' });
   }
 
   undoClick() {
@@ -45,10 +43,8 @@ class App extends Component {
   getActionFromCanvas(action) {
     if (action === 'none') {
       if (this.state.flowArr.length < 3) {
-        console.log(`App getActionFromCanvas: NONE - less than 3`);
         lib.buttonsHandler(false, true, true);
       } else {
-        console.log(`App getActionFromCanvas: NONE - more or equal to 3`);
         lib.buttonsHandler(false, false, true);
       }
       this.setState({ action });

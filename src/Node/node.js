@@ -6,36 +6,19 @@ class Node extends Component {
     super(props);
     this.nodeMouseOut = this.nodeMouseOut.bind(this);
     this.nodeMouseEnter = this.nodeMouseEnter.bind(this);
-    this.state = {
-      corX: props.nodeObj.corX,
-      corY: props.nodeObj.corY
-    };
   }
 
   nodeMouseEnter() {
-    console.log(`Node nodeMouseEnter`);
-    this.props.idFromNode(this.props.nodeObj.id);
+    this.props.idFromNode(this.props.node.id);
   }
 
   nodeMouseOut() {
-    console.log(`Node nodeMouseOut`);
     this.props.idFromNode(undefined);
   }
 
-  componentDidUpdate() {
-    console.log(`Node componentDidUpdate`);
-    if (this.props.nodeObj.corX !== this.state.corX || this.props.nodeObj.corY !== this.state.corY) {
-      this.setState({
-        corX: this.props.nodeObj.corX,
-        corY: this.props.nodeObj.corY
-      });
-    }
-  }
-
   render() {
-    console.log(`Node render`);
     return (
-      <circle cx={this.state.corX} cy={this.state.corY} r={this.props.nodeObj.radius} onMouseEnter={this.nodeMouseEnter} onMouseOut={this.nodeMouseOut} style={{
+      <circle cx={this.props.node.coorX} cy={this.props.node.coorY} r={this.props.node.radius} onMouseEnter={this.nodeMouseEnter} onMouseOut={this.nodeMouseOut} style={{
         stroke: 'black',
         strokeWidth: '1',
         fill: '#d7dadb'
