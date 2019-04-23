@@ -4,7 +4,7 @@ import * as final from './final';
  * Return true if there a collision between two nodes, otherwise false
  * @param {Array} flowArr 
  */
-export function nodeOnNode(flowArr) {
+export function isNodeOnNode(flowArr) {
   const node = flowArr[flowArr.length - 1];
   for (let i = 0; i < flowArr.length - 1; i++) {
     const distance = Math.sqrt((node.corX - flowArr[i].corX) ** 2 + (node.corY - flowArr[i].corY) ** 2);
@@ -24,8 +24,8 @@ export function mouseOnNode(x, y, flowArr) {
   const corX = mouseOnCanvasCorX(x);
   const corY = y - final.headerHeight;
   for (let i = 0; i < flowArr.length - 1; i++) {
-    let math = Math.sqrt((corX - flowArr[i].corX) ** 2 + (corY - flowArr[i].corY) ** 2);
-    if (flowArr[i].radius >= math) {
+    const distance = Math.sqrt((corX - flowArr[i].corX) ** 2 + (corY - flowArr[i].corY) ** 2);
+    if (flowArr[i].radius >= distance) {
       return i;
     }
   }

@@ -11,7 +11,6 @@ class Canvas extends Component {
     this.canvasMouseMove = this.canvasMouseMove.bind(this);
     this.getIDFromNode = this.getIDFromNode.bind(this);
     this.canvasClick = this.canvasClick.bind(this);
-    this.errorNodeClick = true; //System will know if there a collision between two nodes (while creating a new node)
     this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
     this.mouseHoverNodeID = undefined; //Which node ID it, while mouse hover on node
     this.state = {
@@ -23,7 +22,7 @@ class Canvas extends Component {
     let flowArr = this.state.flowArr;
     let nodeObj = {
       id: flowArr.length,
-      corX, 
+      corX,
       corY,
       radius: final.nodeRadius,
       objectType: 'node'
@@ -47,15 +46,17 @@ class Canvas extends Component {
   }
 
   identifySituation(x, y) {
-    if (this.props.action === 'node' && this.errorNodeClick === false) {
-      return 'final-node';
+    if (this.props.action === 'node') {
+      if (lib.isNodeOnNode(this.state.flowArr) === false) {
+        return 'final-node';
+      }
     }
     if (this.props.action === 'none' && this.mouseHoverNodeID !== undefined && this.edgeClick === false) {
       return 'starting-edge';
     }
     if (this.props.action === 'none' && this.edgeClick === true) {
       const toID = lib.mouseOnNode(x, y, this.state.flowArr); //Get the ID of node where the mouse is inside
-      if (this.isSafeFinalClick(toID)) { 
+      if (this.isSafeFinalClick(toID)) {
         return 'final-edge';
       }
     }
@@ -75,7 +76,6 @@ class Canvas extends Component {
       let flowArr = this.state.flowArr;
       flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
       flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
-      this.errorNodeClick = lib.nodeOnNode(flowArr); //Check if there a collision between two nodes
       this.setState({ flowArr });
     }
   }
@@ -84,7 +84,6 @@ class Canvas extends Component {
     const situation = this.identifySituation(event.pageX, event.pageY);
     switch (situation) {
       case 'final-node':
-        this.errorNodeClick = true;
         this.props.actionFromCanvas('none');
         this.props.flowappFromCanvas(this.state.flowArr);
         break;
@@ -96,8 +95,6 @@ class Canvas extends Component {
       case 'final-edge':
         const flowArr = this.state.flowArr;
         const toID = lib.mouseOnNode(event.pageX, event.pageY, flowArr); //Get the ID of node where the mouse is inside
-        flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
-        flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
         flowArr[flowArr.length - 1].toID = toID; //Update the ID of end node
         this.props.flowappFromCanvas(this.state.flowArr); //Update the flowArr in the App component
         this.edgeClick = false;
@@ -126,7 +123,6 @@ class Canvas extends Component {
       switch (this.props.action) {
         case 'stop':
           console.log(`Canvas componentDidUpdate - action: STOP`);
-          this.errorNodeClick = true;
           this.edgeClick = false;
           this.mouseHoverNodeID = undefined;
           this.props.actionFromCanvas('none');
