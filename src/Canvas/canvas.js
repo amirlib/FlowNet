@@ -112,8 +112,8 @@ class Canvas extends Component {
     this.mouseHoverNodeID = info;
   }
 
-  componentDidMount() {
-    console.log(`Canvas componentDidMount`);
+  componentWillMount() {
+    console.log(`Canvas componentWillMount`);
     if (this.state.flowArr.length < 3) {
       this.setNode(50, 350);
       this.setNode(650, 350);
