@@ -12,6 +12,7 @@ class Edge extends Component {
   }
 
   componentDidUpdate() {
+    console.log(`Edge componentDidUpdate`);
     if (this.props.edgeObj.corX !== this.state.corX || this.props.edgeObj.corY !== this.state.corY) {
       this.setState({
         corX: this.props.edgeObj.corX,
@@ -22,6 +23,7 @@ class Edge extends Component {
   }
 
   render() {
+    console.log(`Edge render`);
     return (
       <line x1={this.props.edgeObj.from.corX} y1={this.props.edgeObj.from.corY} x2={this.state.corX} y2={this.state.corY} style={{
         stroke: 'black',

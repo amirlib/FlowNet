@@ -72,7 +72,9 @@ class Canvas extends Component {
   }
 
   canvasMouseMove(event) {
+    console.log(`Canvas canvasMouseMove`);
     if (this.props.action === 'node' || this.edgeClick === true) { //While there is a new node OR new edge action
+      console.log(`Canvas canvasMouseMove: INSIDE`);
       let flowArr = this.state.flowArr;
       flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
       flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
@@ -81,6 +83,7 @@ class Canvas extends Component {
   }
 
   canvasClick(event) {
+    console.log(`Canvas canvasClick`);
     const situation = this.identifySituation(event.pageX, event.pageY);
     switch (situation) {
       case 'final-node':
