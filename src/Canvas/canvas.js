@@ -14,12 +14,24 @@ class Canvas extends Component {
     this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
     this.mouseHoverNodeID = undefined; //Which node ID it, while mouse hover on node
     this.state = {
-      flowArr: props.flowArr
+      flowArr: [{
+        id: 0,
+        coorX: 50,
+        coorY: 350,
+        radius: final.nodeRadius,
+        objectType: 'node'
+      }, {
+        id: 1,
+        coorX: 650,
+        coorY: 350,
+        radius: final.nodeRadius,
+        objectType: 'node'
+      }]
     };
   }
 
   setNode(coorX, coorY) {
-    let flowArr = this.state.flowArr;
+    let flowArr = Array.from(this.state.flowArr);
     let nodeObj = {
       id: flowArr.length,
       coorX,
@@ -32,7 +44,7 @@ class Canvas extends Component {
   }
 
   setEdge(from) {
-    let flowArr = this.state.flowArr;
+    let flowArr = Array.from(this.state.flowArr);
     let edgeObj = {
       id: flowArr.length,
       from,
@@ -46,10 +58,8 @@ class Canvas extends Component {
   }
 
   identifySituation(x, y) {
-    if (this.props.action === 'node') {
-      if (this.isNodeOnNode() === false) {
-        return 'final-node';
-      }
+    if (this.props.action === 'node' && this.isNodeOnNode() === false) {
+      return 'final-node';
     }
     if (this.props.action === 'none' && this.mouseHoverNodeID !== undefined && this.edgeClick === false) {
       return 'starting-edge';
@@ -74,7 +84,7 @@ class Canvas extends Component {
   canvasMouseMove(event) {
     if (this.props.action === 'node' || this.edgeClick === true) {
       console.log(`Canvas canvasMouseMove: INSIDE`);
-      let flowArr = this.state.flowArr;
+      let flowArr = Array.from(this.state.flowArr);
       flowArr[flowArr.length - 1].coorX = this.getMouseOnCanvasCoorX(event.pageX);
       flowArr[flowArr.length - 1].coorY = event.pageY - final.headerHeight;
       this.setState({ flowArr });
@@ -95,7 +105,7 @@ class Canvas extends Component {
         lib.buttonsHandler(true, true, false);
         break;
       case 'final-edge':
-        const flowArr = this.state.flowArr;
+        let flowArr = Array.from(this.state.flowArr);
         const toID = this.getIDNodeMouseOn(event.pageX, event.pageY, flowArr);
         flowArr[flowArr.length - 1].toID = toID;
         this.setState({ flowArr });
@@ -159,11 +169,7 @@ class Canvas extends Component {
 
   componentWillMount() {
     console.log(`Canvas componentWillMount`);
-    if (this.state.flowArr.length < 3) {
-      this.setNode(50, 350);
-      this.setNode(650, 350);
       this.props.flowappFromCanvas(this.state.flowArr);
-    }
   }
 
   componentDidUpdate(prevProps) {
