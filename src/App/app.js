@@ -27,13 +27,6 @@ class App extends Component {
     if (this.state.flowArr.length < 3) {
       document.getElementById('undo').disabled = true;
     }
-<<<<<<< HEAD
-    /**
-     * Set the deafult disable attribute on buttons
-     */
-    componentDidMount() {
-      console.log(`App componentDidMount`);
-=======
   }
 
   stopClick() {
@@ -50,7 +43,6 @@ class App extends Component {
   getActionFromCanvas(action) {
     if (action === 'none') {
       if (this.state.flowArr.length < 3) {
->>>>>>> Updating
         lib.buttonsHandler(false, true, true);
       } else {
         lib.buttonsHandler(false, false, true);
@@ -59,21 +51,6 @@ class App extends Component {
     }
   }
 
-<<<<<<< HEAD
-    render() {
-      console.log(`App render`);
-        return (
-            <div className='App'>
-                <Canvas flowArr={this.state.flowArr} action={this.state.action} getActionFromCanvas={this.getActionFromCanvas} getFlowArrFromCanvas={this.getFlowArrFromCanvas} />
-                <div className='menu'>
-                    <button id='newNode' onClick={this.newNodeClick}>Node</button>
-                    <button id='undo' onClick={this.undoClick}>Undo</button>
-                    <button id='stop' onClick={this.stopClick}>Stop</button>
-                </div>
-            </div>
-        );
-    }
-=======
   getFlowArrFromCanvas(flowArr) {
     console.log(`App getFlowArrFromCanvas`);
     this.setState({ flowArr });
@@ -97,7 +74,6 @@ class App extends Component {
       </div>
     );
   }
->>>>>>> Updating
 }
 
 export default App;
