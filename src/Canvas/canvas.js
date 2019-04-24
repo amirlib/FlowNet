@@ -6,146 +6,210 @@ import Edge from '../Edge/edge.js';
 import './canvas.css';
 
 class Canvas extends Component {
-    constructor(props) {
-        super(props);
-        this.canvasMouseMove = this.canvasMouseMove.bind(this);
-        this.getIDFromNode = this.getIDFromNode.bind(this);
-        this.canvasClick = this.canvasClick.bind(this);
-        this.setEdge = this.setEdge.bind(this);
-        this.errorNodeClick = true; //System will know if there a collision between two nodes (while creating a new node)
-        this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
-        this.nodeID = undefined; //Which node ID it, while mouse hover on node
-        this.state = {
-            flowArr: this.props.flowArr, //Array of all the nodes and edges of the network 
-            action: this.props.action //System will know if there is a new node action or not
-        };
-    }
-    /**
-     * Create new edge and saving it information to the array
-     * @param {Object} startNode - The start node object of the edge
-     * @param {number} startNodeID - The ID of start node
-     * @param {number} corX - The X coordinate of the end of the edge
-     * @param {number} corY - The Y coordinate of the end of the edge
-     * @param {number} endNodeID - The ID of end node
-     */
-    setEdge(startNode, startNodeID, corX, corY, endNodeID) {
-        let flowArr = this.state.flowArr;
-        let edgeObj = { //Creating an object with information on the edge to be save
-            startNode,
-            startNodeID,
-            corX,
-            corY,
-            endNodeID,
-            objectType: 'edge'
-        };
-        flowArr.push(edgeObj);
-        this.setState({ flowArr });
-    }
-    /**
-     * Method of the mouse move event on the Canvas component
-     */
-    canvasMouseMove(event) {
-      console.log(`Canvas canvasMouseMove`);
-        if (this.state.action === 'node' || this.edgeClick !== false) { //While there is a new node OR new edge action
-          console.log(`Canvas canvasMouseMove: INSIDE`);
-            let flowArr = this.state.flowArr;
-            flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
-            flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
-            this.setState({ flowArr });
-            this.errorNodeClick = lib.nodeOnNode(flowArr); //Check if there a collision between two nodes
-        }
-    }
-    /**
-     * Method of the click event on the Canvas component
-     */
-    canvasClick(event) {
-      console.log(`Canvas canvasClick`);
-        if (this.state.action === 'node' && this.errorNodeClick === false) { //When there is a new node action and no collision between two nodes
-            this.props.getActionFromCanvas('none'); //Update the action state - The end of creating node
-            this.props.getFlowArrFromCanvas(this.state.flowArr); //Update the flowArr in the App component
-            lib.buttonsHandler(false, false, true);
-        } else if (this.nodeID !== undefined && this.edgeClick === false && this.state.action === 'none') { //When there is the first click of the edge (the strat edge)
-            let flowArr = this.state.flowArr;
-            this.edgeClick = true;
-            this.setEdge(flowArr[this.nodeID], this.nodeID, flowArr[this.nodeID].corX, flowArr[this.nodeID].corY, this.nodeID);
-            lib.buttonsHandler(true, true, false);
-        } else if (this.edgeClick === true && this.state.action === 'none') { //When there is the second click of the edge (the end edge)
-            let flowArr = this.state.flowArr;
-            let endNodeID = lib.mouseOnNode(lib.mouseOnCanvasCorX(event.pageX), event.pageY - final.headerHeight, flowArr); //Get the ID of node where the mouse is inside
-            if (endNodeID === -1) {
-                console.log(`Can't make legal edge`);
-            } else if (flowArr[flowArr.length - 1].startNodeID === endNodeID) {
-                console.log('Same node');
-            } else if (lib.searchSameEdges(flowArr, endNodeID) === true) {
-                console.log('Same edge');
-            } else {
-                flowArr[flowArr.length - 1].corX = lib.mouseOnCanvasCorX(event.pageX); //Update the X oordinate
-                flowArr[flowArr.length - 1].corY = event.pageY - final.headerHeight; //Update the Y oordinate
-                flowArr[flowArr.length - 1].endNodeID = endNodeID; //Update the ID of end node
-                this.props.getFlowArrFromCanvas(this.state.flowArr); //Update the flowArr in the App component
-                this.edgeClick = false;
-                lib.buttonsHandler(false, false, true);
-            }
-        }
-    }
-    /**
-     * Get the ID of node when the mouse is inside.
-     * @param {number} info - The ID of node
-     */
-    getIDFromNode(info) {
-        this.nodeID = info;
-    }
-    /**
-     * Set two default nodes. One for the source and second for the sink
-     */
-    componentWillMount() {
-      console.log(`Canvas componentWillMount`);
-        if (this.state.flowArr.length < 3) {
-            let flowArr = this.state.flowArr;
-            flowArr = lib.setNode(50, 350, flowArr);
-            flowArr = lib.setNode(650, 350, flowArr);
-            this.setState({ flowArr });
-        }
-    }
-    /**
-     * If recived the "stop" action then stop the process of creating new object and delete it from flowArr. Update the state of action from the Canvas component
-     */
-    componentDidUpdate() {
-      console.log(`Canvas componentDidUpdate`);
-        if (this.props.action === 'stop') {
-            this.errorNodeClick = true;
-            this.edgeClick = false;
-            this.nodeID = undefined;
-            this.props.getActionFromCanvas('none');
-        }
-        if (this.state.action !== this.props.action) {
-            this.setState({
-                action: this.props.action
-            });
-        }
-    }
+  constructor(props) {
+    super(props);
+    this.canvasMouseMove = this.canvasMouseMove.bind(this);
+    this.getIDFromNode = this.getIDFromNode.bind(this);
+    this.canvasClick = this.canvasClick.bind(this);
+    this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
+    this.mouseHoverNodeID = undefined; //Which node ID it, while mouse hover on node
+    this.state = {
+      flowArr: [{
+        id: 0,
+        coorX: 50,
+        coorY: 350,
+        radius: final.nodeRadius,
+        objectType: 'node'
+      }, {
+        id: 1,
+        coorX: 650,
+        coorY: 350,
+        radius: final.nodeRadius,
+        objectType: 'node'
+      }]
+    };
+  }
 
-    render() {
-      console.log(`Canvas render`);
-        return (
-            <div className='canvas-root' id='canvas-root' onMouseMove={this.canvasMouseMove} onClick={this.canvasClick}>
-                <svg height='700' width='700'>
-                    <defs>
-                        <marker id="arrow" markerWidth="13" markerHeight="13" refX="0.1" refY="6" orient="auto">
-                            <path d="M2,2 L2,13 L8,7 L2,2" style={{fill: 'red'}} />
-                        </marker>
-                    </defs>
-                    {this.state.flowArr.map((obj, id) => {
-                        if (this.state.flowArr[id].objectType === 'node') {
-                            return <Node key={'node-' + id} id={id} nodeObj={this.state.flowArr[id]} getIDFromNode={this.getIDFromNode} />;
-                        } else {
-                            return <Edge key={'edge-' + id} id={id} edgeObj={this.state.flowArr[id]} />;
-                        }
-                    })}
-                </svg>
-            </div>
-        );
+  setNode(coorX, coorY) {
+    let flowArr = Array.from(this.state.flowArr);
+    let nodeObj = {
+      id: flowArr.length,
+      coorX,
+      coorY,
+      radius: final.nodeRadius,
+      objectType: 'node'
+    };
+    flowArr.push(nodeObj);
+    this.setState({ flowArr });
+  }
+
+  setEdge(from) {
+    let flowArr = Array.from(this.state.flowArr);
+    let edgeObj = {
+      id: flowArr.length,
+      from,
+      coorX: from.coorX,
+      coorY: from.coorY,
+      toID: from.id,
+      objectType: 'edge'
+    };
+    flowArr.push(edgeObj);
+    this.setState({ flowArr });
+  }
+
+  identifySituation(x, y) {
+    if (this.props.action === 'node' && this.isNodeOnNode() === false) {
+      return 'final-node';
     }
+    if (this.props.action === 'none' && this.mouseHoverNodeID !== undefined && this.edgeClick === false) {
+      return 'starting-edge';
+    }
+    if (this.props.action === 'none' && this.edgeClick === true) {
+      const toID = this.getIDNodeMouseOn(x, y, this.state.flowArr);
+      if (this.isSafeFinalClick(toID)) {
+        return 'final-edge';
+      }
+    }
+    return 'none'
+  }
+
+  isSafeFinalClick(ID) {
+    const flowArr = this.state.flowArr;
+    if (ID === -1 || flowArr[flowArr.length - 1].from.id === ID || this.isSameEdge(ID) === true) {
+      return false;
+    }
+    return true;
+  }
+
+  canvasMouseMove(event) {
+    if (this.props.action === 'node' || this.edgeClick === true) {
+      console.log(`Canvas canvasMouseMove: INSIDE`);
+      let flowArr = Array.from(this.state.flowArr);
+      flowArr[flowArr.length - 1].coorX = this.getMouseOnCanvasCoorX(event.pageX);
+      flowArr[flowArr.length - 1].coorY = event.pageY - final.headerHeight;
+      this.setState({ flowArr });
+    }
+  }
+
+  canvasClick(event) {
+    console.log(`Canvas canvasClick`);
+    const situation = this.identifySituation(event.pageX, event.pageY);
+    switch (situation) {
+      case 'final-node':
+        this.props.actionFromCanvas('none');
+        this.props.flowappFromCanvas(this.state.flowArr);
+        break;
+      case 'starting-edge':
+        this.edgeClick = true;
+        this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
+        lib.buttonsHandler(true, true, false);
+        break;
+      case 'final-edge':
+        let flowArr = Array.from(this.state.flowArr);
+        const toID = this.getIDNodeMouseOn(event.pageX, event.pageY, flowArr);
+        flowArr[flowArr.length - 1].toID = toID;
+        this.setState({ flowArr });
+        this.props.flowappFromCanvas(flowArr);
+        this.edgeClick = false;
+        lib.buttonsHandler(false, false, true);
+        break;
+      default:
+        event.preventDefault();
+    }
+  }
+
+  getIDFromNode(info) {
+    this.mouseHoverNodeID = info;
+  }
+
+  isNodeOnNode() {
+    const flowArr = this.state.flowArr;
+    const node = flowArr[flowArr.length - 1];
+    for (let i = 0; i < flowArr.length - 1; i++) {
+      const distance = Math.sqrt((node.coorX - flowArr[i].coorX) ** 2 + (node.coorY - flowArr[i].coorY) ** 2);
+      if (2 * flowArr[i].radius >= distance) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getIDNodeMouseOn(x, y) {
+    const flowArr = this.state.flowArr;
+    const coorX = this.getMouseOnCanvasCoorX(x);
+    const coorY = y - final.headerHeight;
+    for (let i = 0; i < flowArr.length - 1; i++) {
+      const distance = Math.sqrt((coorX - flowArr[i].coorX) ** 2 + (coorY - flowArr[i].coorY) ** 2);
+      if (flowArr[i].radius >= distance) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  getMouseOnCanvasCoorX(mouseCoorX) {
+    if (document.body.clientWidth > final.mainWidth) {
+      return mouseCoorX - (document.body.clientWidth - final.mainWidth) / 2;
+    }
+    return mouseCoorX;
+  }
+
+  isSameEdge(toID) {
+    const flowArr = this.state.flowArr;
+    const edge = flowArr[flowArr.length - 1];
+    for (let i = 0; i < flowArr.length - 1; i++) {
+      if (flowArr[i].objectType === 'edge' && flowArr[i].from.id === edge.from.id) {
+        if (flowArr[i].toID === toID) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  componentWillMount() {
+    console.log(`Canvas componentWillMount`);
+      this.props.flowappFromCanvas(this.state.flowArr);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.action !== prevProps.action) {
+      switch (this.props.action) {
+        case 'stop':
+          console.log(`Canvas componentDidUpdate - action: STOP`);
+          this.edgeClick = false;
+          this.mouseHoverNodeID = undefined;
+          this.props.actionFromCanvas('none');
+          break;
+        case 'node':
+          console.log(`Canvas componentDidUpdate - action: NODE`);
+          this.setNode(350, 350);
+          break;
+        default:
+      }
+    }
+  }
+
+  render() {
+    console.log(`Canvas render`);
+    return (
+      <div className='canvas-root' id='canvas-root' onMouseMove={this.canvasMouseMove} onClick={this.canvasClick}>
+        <svg height='700' width='700'>
+          <defs>
+            <marker id="arrow" markerWidth="13" markerHeight="13" refX="0.1" refY="6" orient="auto">
+              <path d="M2,2 L2,13 L8,7 L2,2" style={{ fill: 'red' }} />
+            </marker>
+          </defs>
+          {this.state.flowArr.map(obj => {
+            if (obj.objectType === 'node') {
+              return <Node key={'node-' + obj.id} node={obj} idFromNode={this.getIDFromNode} />;
+            }
+            return <Edge key={'edge-' + obj.id} edge={obj} />;
+          })}
+        </svg>
+      </div>
+    );
+  }
 }
 
 export default Canvas;
