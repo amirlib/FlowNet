@@ -1,79 +1,103 @@
+import gca from 'gca';
 import React, { Component } from 'react';
-import * as lib from '../lib'
+import * as lib from '../lib';
 import Canvas from '../Canvas/canvas.js';
 import './app.css';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.undoClick = this.undoClick.bind(this);
-    this.stopClick = this.stopClick.bind(this);
-    this.newNodeClick = this.newNodeClick.bind(this);
-    this.getActionFromCanvas = this.getActionFromCanvas.bind(this);
-    this.getFlowArrFromCanvas = this.getFlowArrFromCanvas.bind(this);
-    this.state = {
-      flowArr: [], 
-      action: 'none'
-    };
-  }
+	constructor(props) {
+		super(props);
+		this.tool = new gca();
+		this.undoClick = this.undoClick.bind(this);
+		this.stopClick = this.stopClick.bind(this);
+		this.newNodeClick = this.newNodeClick.bind(this);
+		this.updateGraph = this.updateGraph.bind(this);
+		this.state = {
+			graph: this.tool.CreateFlowGraph(),
+			action: 'none'
+		};
+	}
 
-  newNodeClick() {
-    lib.buttonsHandler(true, true, false);
-    this.setState({ action: 'node' });
-  }
+	newNodeClick() {
+		lib.buttonsHandler(true, true, false);
+		this.setState({ action: 'node' });
+	}
 
-  undoClick() {
-    this.deleteLastValueInFlowArr();
-    if (this.state.flowArr.length < 3) {
-      document.getElementById('undo').disabled = true;
-    }
-  }
+	undoClick() {
+		this.setState({ action: 'undo' });
+	}
 
-  stopClick() {
-    this.deleteLastValueInFlowArr();
-    this.setState({ action: 'stop' });
-  }
+	stopClick() {
+		this.setState({ action: 'stop' });
+	}
 
-  deleteLastValueInFlowArr() {
-    let flowArr = this.state.flowArr;
-    flowArr.pop();
-    this.setState({ flowArr });
-  }
+	checkButtons(graph) {
+		if (graph.countEdges() === 0 && graph.nodesID.length === 2) {
+			lib.buttonsHandler(false, true, true);
+		} else {
+			lib.buttonsHandler(false, false, true);
+		}
+	}
 
-  getActionFromCanvas(action) {
-    if (action === 'none') {
-      if (this.state.flowArr.length < 3) {
-        lib.buttonsHandler(false, true, true);
-      } else {
-        lib.buttonsHandler(false, false, true);
-      }
-      this.setState({ action });
-    }
-  }
+	updateGraph(object) {
+		console.log(`App updateGraph`);
+		let graph = this.state.graph.clone();
 
-  getFlowArrFromCanvas(flowArr) {
-    console.log(`App getFlowArrFromCanvas`);
-    this.setState({ flowArr });
-  }
+		console.log(`object.action: ${object.action}`);
+		switch (object.action) {
+			case 'add-node':
+				graph.addNode(object.id);
+				lib.buttonsHandler(false, false, true);
+				break;
+			case 'remove-node':
+				graph.deleteNode(object.id);
+				this.checkButtons(graph);
+				break;
+			case 'add-edge':
+				graph.addEdge(object.from, object.to);
+				lib.buttonsHandler(false, false, true);
+				break;
+			case 'remove-edge':
+				graph.deleteEdge(object.from, object.to);
+				this.checkButtons(graph);
+				break;
+			default:
+				console.log(`App updateGraph default`);
+				this.checkButtons(graph);
+		}
+		this.setState({
+			action: 'none',
+			graph
+		});
+	}
 
-  componentDidMount() {
-    console.log(`App componentDidMount`);
-    lib.buttonsHandler(false, true, true);
-  }
+	componentDidMount() {
+		console.log(`App componentDidMount`);
+		lib.buttonsHandler(false, true, true);
+	}
 
-  render() {
-    console.log(`App render`);
-    return (
-      <div className='App'>
-        <Canvas flowArr={this.state.flowArr} action={this.state.action} actionFromCanvas={this.getActionFromCanvas} flowappFromCanvas={this.getFlowArrFromCanvas} />
-        <div className='menu'>
-          <button id='newNode' onClick={this.newNodeClick}>Node</button>
-          <button id='undo' onClick={this.undoClick}>Undo</button>
-          <button id='stop' onClick={this.stopClick}>Stop</button>
-        </div>
-      </div>
-    );
-  }
+	render() {
+		console.log(`App render`);
+		return (
+			<div className="App">
+				<Canvas
+					action={this.state.action}
+					flowappFromCanvas={this.updateGraph}
+				/>
+				<div className="menu">
+					<button id="newNode" onClick={this.newNodeClick}>
+						Node
+					</button>
+					<button id="undo" onClick={this.undoClick}>
+						Undo
+					</button>
+					<button id="stop" onClick={this.stopClick}>
+						Stop
+					</button>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default App;
