@@ -40,10 +40,8 @@ class App extends Component {
 	}
 
 	updateGraph(object) {
-		console.log(`App updateGraph`);
 		let graph = this.state.graph.clone();
 
-		console.log(`object.action: ${object.action}`);
 		switch (object.action) {
 			case 'add-node':
 				graph.addNode(object.id);
@@ -62,7 +60,6 @@ class App extends Component {
 				this.checkButtons(graph);
 				break;
 			default:
-				console.log(`App updateGraph default`);
 				this.checkButtons(graph);
 		}
 		this.setState({
@@ -72,28 +69,19 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		console.log(`App componentDidMount`);
 		lib.buttonsHandler(false, true, true);
 	}
 
 	render() {
-		console.log(`App render`);
 		return (
 			<div className="App">
 				<Canvas
 					action={this.state.action}
-					flowappFromCanvas={this.updateGraph}
-				/>
+					flowappFromCanvas={this.updateGraph}/>
 				<div className="menu">
-					<button id="newNode" onClick={this.newNodeClick}>
-						Node
-					</button>
-					<button id="undo" onClick={this.undoClick}>
-						Undo
-					</button>
-					<button id="stop" onClick={this.stopClick}>
-						Stop
-					</button>
+					<button id="newNode" onClick={this.newNodeClick}>Node</button>
+					<button id="undo" onClick={this.undoClick}>Undo</button>
+					<button id="stop" onClick={this.stopClick}>Stop</button>
 				</div>
 			</div>
 		);
