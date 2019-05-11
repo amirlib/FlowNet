@@ -1,7 +1,7 @@
 import gca from 'gca';
 import React, { Component } from 'react';
-import * as lib from '../lib';
 import Canvas from '../Canvas/canvas.js';
+import EdgeWindow from '../EdgeWindow/EdgeWindow.js';
 import './app.css';
 
 class App extends Component {
@@ -11,15 +11,17 @@ class App extends Component {
 		this.undoClick = this.undoClick.bind(this);
 		this.stopClick = this.stopClick.bind(this);
 		this.newNodeClick = this.newNodeClick.bind(this);
-		this.updateGraph = this.updateGraph.bind(this);
+    this.updateGraph = this.updateGraph.bind(this);
 		this.state = {
 			graph: this.tool.CreateFlowGraph(),
-			action: 'none'
+      action: 'none',
+      windowDisplay: 'none',
+      windowData: null
 		};
 	}
 
 	newNodeClick() {
-		lib.buttonsHandler(true, true, false);
+		this.buttonsHandler(true, true, false);
 		this.setState({ action: 'node' });
 	}
 
@@ -29,52 +31,82 @@ class App extends Component {
 
 	stopClick() {
 		this.setState({ action: 'stop' });
-	}
+  }
+  
+  buttonsHandler(newNode, undo, stop) {
+    document.getElementById('newNode').disabled = newNode;
+    document.getElementById('undo').disabled = undo;
+    document.getElementById('stop').disabled = stop;
+  }
 
-	checkButtons(graph) {
+	isUndoNeedBeDisabled(graph) {
 		if (graph.countEdges() === 0 && graph.nodesID.length === 2) {
-			lib.buttonsHandler(false, true, true);
+			this.buttonsHandler(false, true, true);
 		} else {
-			lib.buttonsHandler(false, false, true);
+			this.buttonsHandler(false, false, true);
 		}
 	}
 
 	updateGraph(object) {
-		let graph = this.state.graph.clone();
+    let graph = this.state.graph.clone();
+    let action = this.state.action;
+    let windowDisplay = this.state.windowDisplay;
+    let windowData = this.state.windowData;
 
 		switch (object.action) {
 			case 'add-node':
 				graph.addNode(object.id);
-				lib.buttonsHandler(false, false, true);
+        this.buttonsHandler(false, false, true);
+        action = 'none';
 				break;
 			case 'remove-node':
 				graph.deleteNode(object.id);
-				this.checkButtons(graph);
-				break;
-			case 'add-edge':
-				graph.addEdge(object.from, object.to);
-				lib.buttonsHandler(false, false, true);
-				break;
+        this.isUndoNeedBeDisabled(graph);
+        action = 'none';
+        break;
+      case 'starting-edge':
+        this.buttonsHandler(true, true, false);
+        break;
+      case 'open-edge-window':
+        windowDisplay = 'flex';
+        windowData = {
+          from: object.from,
+          to: object.to
+        };
+        break;
+      case 'add-edge':
+        this.buttonsHandler(false, false, true);
+        graph.addEdge(object.from, object.to, object.capacity, object.flow);
+        windowDisplay = 'none';
+        break;
 			case 'remove-edge':
 				graph.deleteEdge(object.from, object.to);
-				this.checkButtons(graph);
+        this.isUndoNeedBeDisabled(graph);
+        action = 'none';
 				break;
 			default:
-				this.checkButtons(graph);
-		}
+        this.isUndoNeedBeDisabled(graph);
+        action = 'none';
+    }
 		this.setState({
-			action: 'none',
-			graph
+			action,
+      graph,
+      windowDisplay,
+      windowData
 		});
-	}
+  }
 
 	componentDidMount() {
-		lib.buttonsHandler(false, true, true);
+		this.buttonsHandler(false, true, true);
 	}
 
 	render() {
 		return (
 			<div className="App">
+        <EdgeWindow
+          display={this.state.windowDisplay}
+          data={this.state.windowData}
+          edgeFromWindow={this.updateGraph}/>
 				<Canvas
 					action={this.state.action}
 					flowappFromCanvas={this.updateGraph}/>

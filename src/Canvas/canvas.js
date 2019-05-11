@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import * as lib from '../lib';
-import * as final from '../final';
 import Node from '../Node/node.js';
 import Edge from '../Edge/edge.js';
 import './canvas.css';
+import * as final from '../final';
 
 class Canvas extends Component {
 	constructor(props) {
@@ -124,18 +123,22 @@ class Canvas extends Component {
 
 				this.props.flowappFromCanvas(node);
 				break;
-			case 'starting-edge':
-				this.edgeClick = true;
-				this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
-				lib.buttonsHandler(true, true, false);
+      case 'starting-edge':
+        const action = {
+          action: 'starting-edge'
+        }
+
+        this.edgeClick = true;
+        this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
+        this.props.flowappFromCanvas(action);
 				break;
 			case 'ending-edge':
 				let flowArr = this.state.flowArr;
         const toID = this.getIDNodeMouseOn(event.pageX, event.pageY, flowArr);
         const edge = {
 					from: flowArr[flowArr.length - 1].from.id,
-					to: flowArr[flowArr.length - 1].toID,
-					action: 'add-edge'
+					to: toID,
+					action: 'open-edge-window'
         };
 
         flowArr[flowArr.length - 1].toID = toID;
@@ -202,17 +205,13 @@ class Canvas extends Component {
 
 			switch (lastObject.type) {
 				case 'node':
-					removedObject = {
-						id: lastObject.id,
-						action: 'remove-node'
-					};
+          removedObject.id = lastObject.id;
+					removedObject.action ='remove-node';
 					break;
 				case 'edge':
-					removedObject = {
-						from: lastObject.from.id,
-						to: lastObject.toID,
-						action: 'remove-edge'
-					};
+          removedObject.from = lastObject.from.id;
+          removedObject.to = lastObject.toID;
+          removedObject.action = 'remove-edge';
 					break;
 				default:
 			}
@@ -237,7 +236,8 @@ class Canvas extends Component {
           const removedObject = this.deleteLastValueInFlowArr();
 					this.props.flowappFromCanvas(removedObject);
 					break;
-				default:
+        default:
+          this.props.flowappFromCanvas('none');
 			}
 		}
 	}
