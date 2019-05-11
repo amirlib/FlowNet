@@ -14,7 +14,7 @@ class App extends Component {
     this.updateGraph = this.updateGraph.bind(this);
 		this.state = {
 			graph: this.tool.CreateFlowGraph(),
-      action: 'none',
+      status: 'none',
       windowDisplay: 'none',
       windowData: null
 		};
@@ -22,15 +22,15 @@ class App extends Component {
 
 	newNodeClick() {
 		this.buttonsHandler(true, true, false);
-		this.setState({ action: 'node' });
+		this.setState({ status: 'creating-node' });
 	}
 
 	undoClick() {
-		this.setState({ action: 'undo' });
+		this.setState({ status: 'undo' });
 	}
 
 	stopClick() {
-		this.setState({ action: 'stop' });
+		this.setState({ status: 'stop' });
   }
   
   buttonsHandler(newNode, undo, stop) {
@@ -49,22 +49,23 @@ class App extends Component {
 
 	updateGraph(object) {
     let graph = this.state.graph.clone();
-    let action = this.state.action;
+    let status = this.state.status;
     let windowDisplay = this.state.windowDisplay;
     let windowData = this.state.windowData;
 
 		switch (object.action) {
 			case 'add-node':
 				graph.addNode(object.id);
+        status = 'none';
         this.buttonsHandler(false, false, true);
-        action = 'none';
 				break;
 			case 'remove-node':
 				graph.deleteNode(object.id);
+        status = 'none';
         this.isUndoNeedBeDisabled(graph);
-        action = 'none';
         break;
       case 'starting-edge':
+        status = 'creating-edge';
         this.buttonsHandler(true, true, false);
         break;
       case 'open-edge-window':
@@ -75,22 +76,23 @@ class App extends Component {
         };
         break;
       case 'add-edge':
-        this.buttonsHandler(false, false, true);
         graph.addEdge(object.from, object.to, object.capacity, object.flow);
+        status = 'none';
         windowDisplay = 'none';
+        this.buttonsHandler(false, false, true);
         break;
 			case 'remove-edge':
 				graph.deleteEdge(object.from, object.to);
+        status = 'none';
         this.isUndoNeedBeDisabled(graph);
-        action = 'none';
 				break;
 			default:
+        status = 'none';
         this.isUndoNeedBeDisabled(graph);
-        action = 'none';
     }
 		this.setState({
-			action,
       graph,
+      status,
       windowDisplay,
       windowData
 		});
@@ -101,6 +103,7 @@ class App extends Component {
 	}
 
 	render() {
+    console.log(`App render`);
 		return (
 			<div className="App">
         <EdgeWindow
@@ -108,7 +111,7 @@ class App extends Component {
           data={this.state.windowData}
           edgeFromWindow={this.updateGraph}/>
 				<Canvas
-					action={this.state.action}
+					status={this.state.status}
 					flowappFromCanvas={this.updateGraph}/>
 				<div className="menu">
 					<button id="newNode" onClick={this.newNodeClick}>Node</button>

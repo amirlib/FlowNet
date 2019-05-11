@@ -10,7 +10,6 @@ class Canvas extends Component {
 		this.canvasMouseMove = this.canvasMouseMove.bind(this);
 		this.getIDFromNode = this.getIDFromNode.bind(this);
 		this.canvasClick = this.canvasClick.bind(this);
-		this.edgeClick = false; //System will know if there a new edge action or not(without render the page)
 		this.mouseHoverNodeID = undefined; //Which node ID it, while mouse hover on node
 		this.state = {
 			flowArr: [
@@ -61,14 +60,14 @@ class Canvas extends Component {
 		this.setState({ flowArr });
 	}
 
-	identifySituation(x, y) {
-		if (this.props.action === 'node' && this.isNodeOnNode() === false) {
+	identifyClickSituation(x, y) {
+		if (this.props.status === 'creating-node' && this.isNodeOnNode() === false) {
 			return 'final-node';
 		}
-		if (this.props.action === 'none' && this.mouseHoverNodeID !== undefined && this.edgeClick === false) {
+		if (this.props.status === 'none' && this.mouseHoverNodeID !== undefined) {
 			return 'starting-edge';
 		}
-		if (this.props.action === 'none' && this.edgeClick === true) {
+		if (this.props.status === 'creating-edge') {
       const toID = this.getIDNodeMouseOn(x, y, this.state.flowArr);
 
 			if (this.isSafeFinalClick(toID)) {
@@ -102,52 +101,47 @@ class Canvas extends Component {
 	}
 
 	canvasMouseMove(event) {
-		if (this.props.action === 'node' || this.edgeClick === true) {
-      let flowArr = Array.from(this.state.flowArr);
+    switch (this.props.status) {
+			case 'creating-node':
+      case 'creating-edge':
+        let flowArr = Array.from(this.state.flowArr);
 
-			flowArr[flowArr.length - 1].coorX = this.getMouseOnCanvasCoorX(event.pageX);
-			flowArr[flowArr.length - 1].coorY = event.pageY - final.headerHeight;
-			this.setState({ flowArr });
-		}
-	}
-
-	canvasClick(event) {
-		const situation = this.identifySituation(event.pageX, event.pageY);
-
-		switch (situation) {
-			case 'final-node':
-				const node = {
-					id: this.state.flowArr[this.state.flowArr.length - 1].id,
-					action: 'add-node'
-        };
-
-				this.props.flowappFromCanvas(node);
-				break;
-      case 'starting-edge':
-        const action = {
-          action: 'starting-edge'
-        }
-
-        this.edgeClick = true;
-        this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
-        this.props.flowappFromCanvas(action);
-				break;
-			case 'ending-edge':
-				let flowArr = this.state.flowArr;
-        const toID = this.getIDNodeMouseOn(event.pageX, event.pageY, flowArr);
-        const edge = {
-					from: flowArr[flowArr.length - 1].from.id,
-					to: toID,
-					action: 'open-edge-window'
-        };
-
-        flowArr[flowArr.length - 1].toID = toID;
-        this.edgeClick = false;
-				this.props.flowappFromCanvas(edge);
+        flowArr[flowArr.length - 1].coorX = this.getMouseOnCanvasCoorX(event.pageX);
+        flowArr[flowArr.length - 1].coorY = event.pageY - final.headerHeight;
+        this.setState({ flowArr });
 				break;
 			default:
 				event.preventDefault();
 		}
+	}
+
+	canvasClick(event) {
+    const situation = this.identifyClickSituation(event.pageX, event.pageY);
+    let data = {};
+
+		switch (situation) {
+			case 'final-node':
+        data.id = this.state.flowArr[this.state.flowArr.length - 1].id;
+        data.action = 'add-node';
+				break;
+      case 'starting-edge':
+        data.action = 'starting-edge';
+        this.setEdge(this.state.flowArr[this.mouseHoverNodeID]);
+				break;
+      case 'ending-edge':
+        let flowArr = this.state.flowArr;
+        const toID = this.getIDNodeMouseOn(event.pageX, event.pageY, flowArr);
+
+        data.from = flowArr[flowArr.length - 1].from.id;
+        data.to = toID;
+        data.action = 'open-edge-window';
+        flowArr[flowArr.length - 1].toID = toID;
+				break;
+      default:
+        event.preventDefault();
+        return;
+    }
+    this.props.flowappFromCanvas(data);
 	}
 
 	getIDFromNode(info) {
@@ -196,10 +190,9 @@ class Canvas extends Component {
 
 	deleteLastValueInFlowArr() {
 		let flowArr = Array.from(this.state.flowArr);
-		let removedObject = {
-			action: 'none'
-		};
+    let removedObject = {};
 
+    removedObject.action = 'none';
 		if (flowArr.length > 2) {
       const lastObject = flowArr.pop();
 
@@ -221,23 +214,22 @@ class Canvas extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if (this.props.action !== prevProps.action) {
-			switch (this.props.action) {
+		if (this.props.status !== prevProps.status) {
+			switch (this.props.status) {
+        case 'creating-node':
+          this.setNode(700, 0);
+          break;
+        case 'undo':
+          const removedObject = this.deleteLastValueInFlowArr();
+
+					this.props.flowappFromCanvas(removedObject);
+					break;
 				case 'stop':
-					this.edgeClick = false;
           this.mouseHoverNodeID = undefined;
           this.deleteLastValueInFlowArr();
           this.props.flowappFromCanvas('none');
 					break;
-				case 'node':
-					this.setNode(700, 0);
-					break;
-				case 'undo':
-          const removedObject = this.deleteLastValueInFlowArr();
-					this.props.flowappFromCanvas(removedObject);
-					break;
         default:
-          this.props.flowappFromCanvas('none');
 			}
 		}
 	}
