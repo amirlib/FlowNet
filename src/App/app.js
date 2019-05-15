@@ -35,7 +35,9 @@ class App extends Component {
   }
 
   flowClick() {
-		console.log(this.tool.EdmondsKarp(this.state.graph));
+    alert(this.tool.EdmondsKarp(this.state.graph));
+    console.log(this.state.graph.toString());
+    console.log(this.state.graph.edgesList.toString());
   }
   
   buttonsHandler(newNode, undo, stop) {
@@ -120,6 +122,8 @@ class App extends Component {
 	}
 
 	render() {
+    console.log(this.state.graph.toString());
+    console.log(this.state.graph.edgesList.toString());
 		return (
 			<div className="App">
       	<div className="drawer">

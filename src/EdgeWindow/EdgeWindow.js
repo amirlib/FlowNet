@@ -8,11 +8,21 @@ class EdgeWindow extends Component {
   }
   
 	createEdge() {
+    let capacity = parseInt(document.getElementById("capacity").value, 10);
+    let flow = parseInt(document.getElementById("flow").value, 10);
+
+    if (isNaN(capacity) || capacity < 0) {
+      capacity = 1;
+    }
+    if (isNaN(flow)) {
+      flow = 0;
+    }
+
     const edge = {
       from: this.props.data.from,
       to: this.props.data.to,
-      capacity: document.getElementById("capacity").value,
-      flow: document.getElementById("flow").value,
+      capacity,
+      flow,
       action: 'add-edge'
     }
 
@@ -28,20 +38,20 @@ class EdgeWindow extends Component {
 				}}>
         <div className="window-edge">
           <div className="edge-header">
-            <span>Please insert initial values of capacity and flow for the new edge. The default values are 1 for the capacity and 0 to flow.</span>
+            <span>Please insert initial integer values of capacity and flow for the new edge. The default values are 1 for the capacity and 0 to flow.</span>
           </div>
           <div className="edge-container">
             <div className="edge-cell">
               <label>Capacity</label>
             </div>
             <div className="edge-cell">
-              <input type="text" id="capacity" alt="capacity"></input>
+              <input type="number" id="capacity" alt="capacity"></input>
             </div>
             <div className="edge-cell">
               <label>Flow</label>
             </div>
             <div className="edge-cell">
-              <input type="text" id="flow" alt="flow"></input>
+              <input type="number" id="flow" alt="flow"></input>
             </div>
           </div>
           <div className="edge-footer">
