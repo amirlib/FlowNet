@@ -120,8 +120,6 @@ class App extends Component {
 	}
 
 	render() {
-    console.log(this.state.graph.toString());
-    console.log(this.state.graph.edgesList.toString());
 		return (
 			<div className="App">
       	<div className="drawer">
