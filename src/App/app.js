@@ -36,8 +36,6 @@ class App extends Component {
 
   flowClick() {
     alert(this.tool.EdmondsKarp(this.state.graph));
-    console.log(this.state.graph.toString());
-    console.log(this.state.graph.edgesList.toString());
   }
   
   buttonsHandler(newNode, undo, stop) {
