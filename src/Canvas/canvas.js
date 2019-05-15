@@ -183,7 +183,7 @@ class Canvas extends Component {
 
 	getMouseOnCanvasCoorX(mouseCoorX) {
 		if (document.body.clientWidth > final.mainWidth) {
-			return mouseCoorX - (document.body.clientWidth - final.mainWidth) / 2;
+			return mouseCoorX - (document.body.clientWidth - final.mainWidth) / 2 - final.drawerWidth / 2;
 		}
 		return mouseCoorX;
 	}
