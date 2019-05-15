@@ -9,7 +9,8 @@ class App extends Component {
 		super(props);
 		this.tool = new gca();
 		this.undoClick = this.undoClick.bind(this);
-		this.stopClick = this.stopClick.bind(this);
+    this.stopClick = this.stopClick.bind(this);
+    this.flowClick = this.flowClick.bind(this);
 		this.newNodeClick = this.newNodeClick.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
 		this.state = {
@@ -31,6 +32,10 @@ class App extends Component {
 
 	stopClick() {
 		this.setState({ status: 'stop' });
+  }
+
+  flowClick() {
+		console.log(this.tool.EdmondsKarp(this.state.graph));
   }
   
   buttonsHandler(newNode, undo, stop) {
@@ -99,13 +104,27 @@ class App extends Component {
   }
 
 	componentDidMount() {
+    const menu = document.querySelector('.menu-tools');
+		const main = document.querySelector('main');
+		const drawer = document.querySelector('.drawer');
+
+		menu.addEventListener('click', function (e) {
+			drawer.classList.toggle('open');
+			e.stopPropagation();
+		});
+		
+		main.addEventListener('click', function () {
+			drawer.classList.remove('open');
+		});
 		this.buttonsHandler(false, true, true);
 	}
 
 	render() {
-    console.log(`App render`);
 		return (
 			<div className="App">
+      	<div className="drawer">
+          <button id="maxFlow" className="tool" onClick={this.flowClick}>Edmond's Karp</button>
+				</div>
         <EdgeWindow
           display={this.state.windowDisplay}
           data={this.state.windowData}
@@ -113,7 +132,7 @@ class App extends Component {
 				<Canvas
 					status={this.state.status}
 					flowappFromCanvas={this.updateGraph}/>
-				<div className="menu">
+				<div className="menu-graph">
 					<button id="newNode" onClick={this.newNodeClick}>Node</button>
 					<button id="undo" onClick={this.undoClick}>Undo</button>
 					<button id="stop" onClick={this.stopClick}>Stop</button>
