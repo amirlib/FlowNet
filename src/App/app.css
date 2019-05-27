@@ -1,18 +1,18 @@
 .App {
   width: 750px;
   height: 100%;
-	margin-left: auto;
-	margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
 }
 
 .menu-graph {
-	width: 50px;
+  width: 50px;
   height: 100%;
 }
 
 button {
-	width: 50px;
+  width: 50px;
 }
 
 .drawer {
@@ -21,29 +21,29 @@ button {
   position: absolute;
   top: 50px;
   padding: 0.5em;
-	box-sizing: border-box;
+  box-sizing: border-box;
   transform: translate(-150px, 0);
   transition: transform 0.3s ease;
 }
 
 button.tool {
-	box-shadow:inset 0 1px 0 0 #dcecfb;
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa), color-stop(1, #80b5ea));
-	background:-moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background:-webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background:-o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background:-ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
-	background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
-	background-color:#bddbfa;
-	border-radius:6px;
-	border:1px solid #84bbf3;
-	cursor:pointer;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	padding:6px 6px;
-	text-decoration:none;
+  box-shadow:inset 0 1px 0 0 #dcecfb;
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bddbfa), color-stop(1, #80b5ea));
+  background:-moz-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+  background:-webkit-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+  background:-o-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+  background:-ms-linear-gradient(top, #bddbfa 5%, #80b5ea 100%);
+  background:linear-gradient(to bottom, #bddbfa 5%, #80b5ea 100%);
+  background-color:#bddbfa;
+  border-radius:6px;
+  border:1px solid #84bbf3;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:15px;
+  font-weight:bold;
+  padding:6px 6px;
+  text-decoration:none;
   text-shadow:0 1px 0 #528ecc;
   margin: 0;
   width: 100%;
@@ -59,11 +59,11 @@ button.tool {
     width: 850px;
   }
 
-	.drawer {
+  .drawer {
     position: relative;
     top:0;
     height: 100%;
-		transform: translate(0, 0);
+    transform: translate(0, 0);
   }
   
   .menu-tools {

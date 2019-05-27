@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import './EdgeWindow.css';
 
 class EdgeWindow extends Component {
-	constructor(props) {
+  constructor(props) {
     super(props);
     this.createEdge = this.createEdge.bind(this);
   }
-  
-	createEdge() {
+
+  createEdge() {
     let capacity = parseInt(document.getElementById("capacity").value, 10);
     let flow = parseInt(document.getElementById("flow").value, 10);
 
@@ -29,13 +29,13 @@ class EdgeWindow extends Component {
     this.props.edgeFromWindow(edge);
   }
 
-	render() {
-		return (
-			<div
-				className="window-root"
-				style={{
-					display: this.props.display
-				}}>
+  render() {
+    return (
+      <div
+        className="window-root"
+        style={{
+          display: this.props.display
+        }}>
         <div className="window-edge">
           <div className="edge-header">
             <span>Please insert initial integer values of capacity and flow for the new edge. The default values are 1 for the capacity and 0 to flow.</span>
@@ -55,12 +55,12 @@ class EdgeWindow extends Component {
             </div>
           </div>
           <div className="edge-footer">
-          <button id="create" onClick={this.createEdge}>Create</button>
+            <button id="create" onClick={this.createEdge}>Create</button>
           </div>
         </div>
       </div>
-		);
-	}
+    );
+  }
 }
 
 export default EdgeWindow;
