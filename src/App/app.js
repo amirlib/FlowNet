@@ -1,8 +1,8 @@
-import gca from 'gca';
-import React, { Component } from 'react';
-import Canvas from '../Canvas/canvas.js';
-import EdgeWindow from '../EdgeWindow/EdgeWindow.js';
-import './app.css';
+import gca from "gca";
+import React, { Component } from "react";
+import Canvas from "../Canvas/canvas.js";
+import EdgeWindow from "../EdgeWindow/EdgeWindow.js";
+import AppStyle from "./app.module.css";
 
 class App extends Component {
   constructor(props) {
@@ -15,23 +15,23 @@ class App extends Component {
     this.updateGraph = this.updateGraph.bind(this);
     this.state = {
       graph: this.tool.CreateFlowGraph(),
-      status: 'none',
-      windowDisplay: 'none',
+      status: "none",
+      windowDisplay: "none",
       windowData: null
     };
   }
 
   newNodeClick() {
     this.buttonsHandler(true, true, false);
-    this.setState({ status: 'creating-node' });
+    this.setState({ status: "creating-node" });
   }
 
   undoClick() {
-    this.setState({ status: 'undo' });
+    this.setState({ status: "undo" });
   }
 
   stopClick() {
-    this.setState({ status: 'stop' });
+    this.setState({ status: "stop" });
   }
 
   flowClick() {
@@ -39,9 +39,9 @@ class App extends Component {
   }
 
   buttonsHandler(newNode, undo, stop) {
-    document.getElementById('newNode').disabled = newNode;
-    document.getElementById('undo').disabled = undo;
-    document.getElementById('stop').disabled = stop;
+    document.getElementById("newNode").disabled = newNode;
+    document.getElementById("undo").disabled = undo;
+    document.getElementById("stop").disabled = stop;
   }
 
   isUndoNeedBeDisabled(graph) {
@@ -59,40 +59,40 @@ class App extends Component {
     let windowData = this.state.windowData;
 
     switch (object.action) {
-      case 'add-node':
+      case "add-node":
         graph.addNode(object.id);
-        status = 'none';
+        status = "none";
         this.buttonsHandler(false, false, true);
         break;
-      case 'remove-node':
+      case "remove-node":
         graph.deleteNode(object.id);
-        status = 'none';
+        status = "none";
         this.isUndoNeedBeDisabled(graph);
         break;
-      case 'starting-edge':
-        status = 'creating-edge';
+      case "starting-edge":
+        status = "creating-edge";
         this.buttonsHandler(true, true, false);
         break;
-      case 'open-edge-window':
-        windowDisplay = 'flex';
+      case "open-edge-window":
+        windowDisplay = "flex";
         windowData = {
           from: object.from,
           to: object.to
         };
         break;
-      case 'add-edge':
+      case "add-edge":
         graph.addEdge(object.from, object.to, object.capacity, object.flow);
-        status = 'none';
-        windowDisplay = 'none';
+        status = "none";
+        windowDisplay = "none";
         this.buttonsHandler(false, false, true);
         break;
-      case 'remove-edge':
+      case "remove-edge":
         graph.deleteEdge(object.from, object.to);
-        status = 'none';
+        status = "none";
         this.isUndoNeedBeDisabled(graph);
         break;
       default:
-        status = 'none';
+        status = "none";
         this.isUndoNeedBeDisabled(graph);
     }
     this.setState({
@@ -104,38 +104,52 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const menu = document.querySelector('.menu-tools');
-    const main = document.querySelector('main');
-    const drawer = document.querySelector('.drawer');
+    const mainElement = document.querySelector("main");
+    const menuElement = document.getElementById("header-menu");
+    const toolsElement = document.getElementById("app-tools");
 
-    menu.addEventListener('click', function (e) {
-      drawer.classList.toggle('open');
+    menuElement.addEventListener("click", function(e) {
+      toolsElement.classList.toggle(`${AppStyle.open}`);
       e.stopPropagation();
     });
 
-    main.addEventListener('click', function () {
-      drawer.classList.remove('open');
+    mainElement.addEventListener("click", function() {
+      toolsElement.classList.remove(`${AppStyle.open}`);
     });
     this.buttonsHandler(false, true, true);
   }
 
   render() {
     return (
-      <div className="App">
-        <div className="drawer">
-          <button id="maxFlow" className="tool" onClick={this.flowClick}>Edmond's Karp</button>
+      <div className={AppStyle.root}>
+        <div id="app-tools" className={AppStyle.tools}>
+          <button
+            id="maxFlow"
+            className={AppStyle.tool}
+            onClick={this.flowClick}
+          >
+            Edmond's Karp
+          </button>
         </div>
         <EdgeWindow
           display={this.state.windowDisplay}
           data={this.state.windowData}
-          edgeFromWindow={this.updateGraph} />
+          edgeFromWindow={this.updateGraph}
+        />
         <Canvas
           status={this.state.status}
-          flowappFromCanvas={this.updateGraph} />
-        <div className="menu-graph">
-          <button id="newNode" onClick={this.newNodeClick}>Node</button>
-          <button id="undo" onClick={this.undoClick}>Undo</button>
-          <button id="stop" onClick={this.stopClick}>Stop</button>
+          flowappFromCanvas={this.updateGraph}
+        />
+        <div className={AppStyle.menu}>
+          <button id="newNode" onClick={this.newNodeClick}>
+            Node
+          </button>
+          <button id="undo" onClick={this.undoClick}>
+            Undo
+          </button>
+          <button id="stop" onClick={this.stopClick}>
+            Stop
+          </button>
         </div>
       </div>
     );

@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import './node.css';
+import React, { Component } from "react";
 
 class Node extends Component {
   constructor(props) {
@@ -25,10 +24,11 @@ class Node extends Component {
         onMouseEnter={this.nodeMouseEnter}
         onMouseOut={this.nodeMouseOut}
         style={{
-          stroke: 'black',
-          strokeWidth: '1',
-          fill: '#d7dadb'
-        }} />
+          stroke: "black",
+          strokeWidth: "1",
+          fill: "#d7dadb"
+        }}
+      />
     );
   }
 }

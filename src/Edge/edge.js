@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import './edge.css';
+import React, { Component } from "react";
 
 class Edge extends Component {
   constructor(props) {
@@ -14,9 +13,10 @@ class Edge extends Component {
         x2={this.props.edge.coorX}
         y2={this.props.edge.coorY}
         style={{
-          stroke: 'black',
-          strokeWidth: '1'
-        }} />
+          stroke: "black",
+          strokeWidth: "1"
+        }}
+      />
     );
   }
 }

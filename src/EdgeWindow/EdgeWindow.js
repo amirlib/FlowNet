@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import './EdgeWindow.css';
+import React, { Component } from "react";
+import EdgeWindowStyle from "./EdgeWindow.module.css";
 
 class EdgeWindow extends Component {
   constructor(props) {
@@ -23,8 +23,8 @@ class EdgeWindow extends Component {
       to: this.props.data.to,
       capacity,
       flow,
-      action: 'add-edge'
-    }
+      action: "add-edge"
+    };
 
     this.props.edgeFromWindow(edge);
   }
@@ -32,30 +32,36 @@ class EdgeWindow extends Component {
   render() {
     return (
       <div
-        className="window-root"
+        className={EdgeWindowStyle.root}
         style={{
           display: this.props.display
-        }}>
-        <div className="window-edge">
-          <div className="edge-header">
-            <span>Please insert initial integer values of capacity and flow for the new edge. The default values are 1 for the capacity and 0 to flow.</span>
+        }}
+      >
+        <div className={EdgeWindowStyle.window}>
+          <div className={EdgeWindowStyle.windowHeader}>
+            <span>
+              Please insert initial integer values of capacity and flow for the
+              new edge. The default values are 1 for the capacity and 0 to flow.
+            </span>
           </div>
-          <div className="edge-container">
-            <div className="edge-cell">
+          <div className={EdgeWindowStyle.windowContainer}>
+            <div className={EdgeWindowStyle.windowContainerCell}>
               <label>Capacity</label>
             </div>
-            <div className="edge-cell">
+            <div className={EdgeWindowStyle.windowContainerCell}>
               <input type="number" id="capacity" alt="capacity"></input>
             </div>
-            <div className="edge-cell">
+            <div className={EdgeWindowStyle.windowContainerCell}>
               <label>Flow</label>
             </div>
-            <div className="edge-cell">
+            <div className={EdgeWindowStyle.windowContainerCell}>
               <input type="number" id="flow" alt="flow"></input>
             </div>
           </div>
-          <div className="edge-footer">
-            <button id="create" onClick={this.createEdge}>Create</button>
+          <div className={EdgeWindowStyle.windowContainerFooter}>
+            <button id="create" onClick={this.createEdge}>
+              Create
+            </button>
           </div>
         </div>
       </div>

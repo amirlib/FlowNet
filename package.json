@@ -1,26 +1,42 @@
 {
-    "name": "flownet",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "gca": "^2.1.0",
-        "react": "^16.8.6",
-        "react-dom": "^16.8.6",
-        "react-scripts": "3.0.0"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
-    },
-    "eslintConfig": {
-        "extends": "react-app"
-    },
-    "browserslist": [
-        ">0.2%",
-        "not dead",
-        "not ie <= 11",
-        "not op_mini all"
-    ]
+	"name": "flownet",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"gca": "^2.1.0",
+		"husky": "^3.0.9",
+		"lint-staged": "^9.4.2",
+		"prettier": "^1.18.2",
+		"react": "^16.11.0",
+		"react-dom": "^16.11.0",
+		"react-scripts": "3.3.0",
+		"source-map-explorer": "^2.1.0"
+	},
+	"scripts": {
+		"analyze": "source-map-explorer 'build/static/js/*.js'",
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+			"prettier --write",
+			"git add"
+		]
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	]
 }
