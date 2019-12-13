@@ -283,6 +283,7 @@ class Canvas extends Component {
                 />
               );
             }
+
             return <Edge key={"edge-" + obj.id} edge={obj} />;
           })}
         </svg>
