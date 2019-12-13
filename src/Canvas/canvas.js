@@ -32,8 +32,8 @@ class Canvas extends Component {
   }
 
   setNode(coorX, coorY) {
-    let flowArr = Array.from(this.state.flowArr);
-    let nodeObj = {
+    const flowArr = Array.from(this.state.flowArr);
+    const node = {
       id: flowArr.length,
       coorX,
       coorY,
@@ -41,13 +41,13 @@ class Canvas extends Component {
       type: "node"
     };
 
-    flowArr.push(nodeObj);
+    flowArr.push(node);
     this.setState({ flowArr });
   }
 
   setEdge(from) {
-    let flowArr = Array.from(this.state.flowArr);
-    let edgeObj = {
+    const flowArr = Array.from(this.state.flowArr);
+    const edge = {
       id: flowArr.length,
       from,
       coorX: from.coorX,
@@ -56,50 +56,48 @@ class Canvas extends Component {
       type: "edge"
     };
 
-    flowArr.push(edgeObj);
+    flowArr.push(edge);
     this.setState({ flowArr });
   }
 
   identifyClickSituation(x, y) {
-    if (
-      this.props.status === "creating-node" &&
-      this.isNodeOnNode() === false
-    ) {
+    if (this.props.status === "creating-node" && !this.isNodeOnNode()) {
       return "final-node";
     }
     if (this.props.status === "none" && this.mouseHoverNodeID !== undefined) {
       return "starting-edge";
     }
     if (this.props.status === "creating-edge") {
-      const toID = this.getIDNodeMouseOn(x, y, this.state.flowArr);
+      const to = this.getIDNodeMouseOn(x, y, this.state.flowArr);
 
-      if (this.isSafeFinalClick(toID)) {
+      if (this.isSafeFinalClick(to)) {
         return "ending-edge";
       }
     }
     return "none";
   }
 
-  isSafeFinalClick(ID) {
+  isSafeFinalClick(id) {
     const flowArr = this.state.flowArr;
 
     if (
-      ID === -1 ||
-      flowArr[flowArr.length - 1].from.id === ID ||
-      this.isSameEdge(ID) === true
+      id === -1 ||
+      flowArr[flowArr.length - 1].from.id === id ||
+      this.isSameEdge(id)
     ) {
       return false;
     }
+
     return true;
   }
 
-  isSameEdge(toID) {
+  isSameEdge(toId) {
     const flowArr = this.state.flowArr;
     const edge = flowArr[flowArr.length - 1];
 
     for (let i = 0; i < flowArr.length - 1; i++) {
       if (flowArr[i].type === "edge" && flowArr[i].from.id === edge.from.id) {
-        if (flowArr[i].toID === toID) {
+        if (flowArr[i].toID === toId) {
           return true;
         }
       }
