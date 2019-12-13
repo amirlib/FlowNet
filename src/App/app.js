@@ -7,11 +7,12 @@ import AppStyle from "./app.module.css";
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.tool = new gca();
-    this.undoClick = this.undoClick.bind(this);
-    this.stopClick = this.stopClick.bind(this);
     this.flowClick = this.flowClick.bind(this);
     this.newNodeClick = this.newNodeClick.bind(this);
+    this.stopClick = this.stopClick.bind(this);
+    this.undoClick = this.undoClick.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.state = {
       graph: this.tool.CreateFlowGraph(),
@@ -19,6 +20,24 @@ class App extends Component {
       windowDisplay: "none",
       windowData: null
     };
+  }
+
+  addEdgeStatus(from, to, capacity, flow) {
+    const graph = this.state.graph.clone();
+
+    graph.addEdge(from, to, capacity, flow);
+    this.switchToNoneStatusAndSetStates(graph, "none");
+  }
+
+  addNodeStatus(id) {
+    const graph = this.state.graph.clone();
+
+    graph.addNode(id);
+    this.switchToNoneStatusAndSetStates(graph);
+  }
+
+  changeButtonDisabledPropertyValue(name, value) {
+    document.getElementById(name).disabled = value;
   }
 
   checkStatusOfUndoButton(graph) {
@@ -46,28 +65,36 @@ class App extends Component {
     this.switchButtonsToDefaultMode();
   }
 
+  disableButton(name) {
+    this.changeButtonDisabledPropertyValue(name, true);
+  }
+
   disableNewNodeButton() {
-    document.getElementById("newNode").disabled = true;
+    this.disableButton("newNode");
   }
 
   disableStopButton() {
-    document.getElementById("stop").disabled = true;
+    this.disableButton("stop");
   }
 
   disableUndoButton() {
-    document.getElementById("undo").disabled = true;
+    this.disableButton("undo");
+  }
+
+  enableButton(name) {
+    this.changeButtonDisabledPropertyValue(name, false);
   }
 
   enableNewNodeButton() {
-    document.getElementById("newNode").disabled = false;
+    this.enableButton("newNode");
   }
 
   enableStopButton() {
-    document.getElementById("stop").disabled = false;
+    this.enableButton("stop");
   }
 
   enableUndoButton() {
-    document.getElementById("undo").disabled = false;
+    this.enableButton("undo");
   }
 
   flowClick() {
@@ -83,6 +110,35 @@ class App extends Component {
   newNodeClick() {
     this.switchButtonsToStopMode();
     this.setState({ status: "creating-node" });
+  }
+
+  openEdgeWindowStatus(object) {
+    this.setState({
+      windowDisplay: "flex",
+      windowData: {
+        from: object.from,
+        to: object.to
+      }
+    });
+  }
+
+  removeEdgeStatus(from, to) {
+    const graph = this.state.graph.clone();
+
+    graph.deleteEdge(from, to);
+    this.switchToNoneStatusAndSetStates(graph);
+  }
+
+  removeNodeStatus(id) {
+    const graph = this.state.graph.clone();
+
+    graph.deleteNode(id);
+    this.switchToNoneStatusAndSetStates(graph);
+  }
+
+  startingEdgeStatus() {
+    this.switchButtonsToStopMode();
+    this.setState({ status: "creating-edge" });
   }
 
   stopClick() {
@@ -101,59 +157,51 @@ class App extends Component {
     this.enableStopButton();
   }
 
+  switchToNoneStatusAndSetStates(
+    graph,
+    windowDisplay = this.state.windowDisplay
+  ) {
+    this.switchButtonsToDefaultMode(graph);
+    this.setState({
+      graph,
+      status: "none",
+      windowDisplay
+    });
+  }
+
   undoClick() {
     this.setState({ status: "undo" });
   }
 
   updateGraph(object) {
-    let graph = this.state.graph.clone();
-    let status = this.state.status;
-    let windowDisplay = this.state.windowDisplay;
-    let windowData = this.state.windowData;
-
     switch (object.action) {
+      case "add-edge":
+        this.addEdgeStatus(
+          object.from,
+          object.to,
+          object.capacity,
+          object.flow
+        );
+        break;
       case "add-node":
-        graph.addNode(object.id);
-        status = "none";
-        this.switchButtonsToDefaultMode(graph);
-        break;
-      case "remove-node":
-        graph.deleteNode(object.id);
-        status = "none";
-        this.switchButtonsToDefaultMode(graph);
-        break;
-      case "starting-edge":
-        status = "creating-edge";
-        this.switchButtonsToStopMode();
+        this.addNodeStatus(object.id);
         break;
       case "open-edge-window":
-        windowDisplay = "flex";
-        windowData = {
-          from: object.from,
-          to: object.to
-        };
-        break;
-      case "add-edge":
-        graph.addEdge(object.from, object.to, object.capacity, object.flow);
-        status = "none";
-        windowDisplay = "none";
-        this.switchButtonsToDefaultMode(graph);
+        this.openEdgeWindowStatus(object);
         break;
       case "remove-edge":
-        graph.deleteEdge(object.from, object.to);
-        status = "none";
-        this.switchButtonsToDefaultMode(graph);
+        this.removeEdgeStatus(object.from, object.to);
+        break;
+      case "remove-node":
+        this.removeNodeStatus(object.id);
+        break;
+      case "starting-edge":
+        this.startingEdgeStatus();
         break;
       default:
-        status = "none";
         this.switchButtonsToDefaultMode();
+        this.setState({ status: "none" });
     }
-    this.setState({
-      graph,
-      status,
-      windowDisplay,
-      windowData
-    });
   }
 
   render() {

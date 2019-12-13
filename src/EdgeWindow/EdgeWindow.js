@@ -14,6 +14,7 @@ class EdgeWindow extends Component {
     if (isNaN(capacity) || capacity < 0) {
       capacity = 1;
     }
+
     if (isNaN(flow)) {
       flow = 0;
     }
