@@ -112,12 +112,12 @@ class App extends Component {
     this.setState({ status: "creating-node" });
   }
 
-  openEdgeWindowStatus(object) {
+  openEdgeWindowStatus(from, to) {
     this.setState({
       windowDisplay: "flex",
       windowData: {
-        from: object.from,
-        to: object.to
+        from,
+        to
       }
     });
   }
@@ -187,7 +187,7 @@ class App extends Component {
         this.addNodeStatus(object.id);
         break;
       case "open-edge-window":
-        this.openEdgeWindowStatus(object);
+        this.openEdgeWindowStatus(object.from, object.to);
         break;
       case "remove-edge":
         this.removeEdgeStatus(object.from, object.to);

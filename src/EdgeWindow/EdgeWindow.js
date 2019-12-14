@@ -11,13 +11,9 @@ class EdgeWindow extends Component {
     let capacity = parseInt(document.getElementById("capacity").value, 10);
     let flow = parseInt(document.getElementById("flow").value, 10);
 
-    if (isNaN(capacity) || capacity < 0) {
-      capacity = 1;
-    }
+    if (isNaN(capacity) || capacity < 0) capacity = 1;
 
-    if (isNaN(flow)) {
-      flow = 0;
-    }
+    if (isNaN(flow)) flow = 0;
 
     const edge = {
       from: this.props.data.from,
