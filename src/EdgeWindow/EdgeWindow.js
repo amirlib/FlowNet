@@ -7,7 +7,7 @@ class EdgeWindow extends Component {
     this.createEdge = this.createEdge.bind(this);
   }
 
-  createEdge() {
+  parseDataAndSendToApp() {
     let capacity = parseInt(document.getElementById("capacity").value, 10);
     let flow = parseInt(document.getElementById("flow").value, 10);
 
@@ -48,7 +48,7 @@ class EdgeWindow extends Component {
             </div>
           </div>
           <div className={EdgeWindowStyle.windowContainerFooter}>
-            <button id="create" onClick={this.createEdge}>
+            <button id="create" onClick={this.parseDataAndSendToApp}>
               Create
             </button>
           </div>
