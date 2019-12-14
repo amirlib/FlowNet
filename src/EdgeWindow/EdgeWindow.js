@@ -15,14 +15,7 @@ class EdgeWindow extends Component {
 
     if (isNaN(flow)) flow = 0;
 
-    const edge = {
-      from: this.props.data.from,
-      to: this.props.data.to,
-      capacity,
-      flow
-    };
-
-    this.props.addEdge(edge);
+    this.props.sendCapacityAndFlow(capacity, flow);
   }
 
   render() {

@@ -16,17 +16,22 @@ class App extends Component {
     this.undoClick = this.undoClick.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.state = {
+      edgeWindowDisplay: "none",
       graph: this.tool.CreateFlowGraph(),
-      status: "none",
-      windowDisplay: "none",
-      windowData: null
+      newEdgeInfo: null,
+      status: "none"
     };
   }
 
-  addEdge(edge) {
+  addEdge(capacity, flow) {
     const graph = this.state.graph.clone();
 
-    graph.addEdge(edge.from, edge.to, edge.capacity, edge.flow);
+    graph.addEdge(
+      this.state.newEdgeInfo.from,
+      this.state.newEdgeInfo.to,
+      capacity,
+      flow
+    );
     this.switchToNoneStatusAndSetStates(graph, "none");
   }
 
@@ -115,8 +120,8 @@ class App extends Component {
 
   openEdgeWindowStatus(from, to) {
     this.setState({
-      windowDisplay: "flex",
-      windowData: {
+      edgeWindowDisplay: "flex",
+      newEdgeInfo: {
         from,
         to
       }
@@ -160,13 +165,14 @@ class App extends Component {
 
   switchToNoneStatusAndSetStates(
     graph,
-    windowDisplay = this.state.windowDisplay
+    edgeWindowDisplay = this.state.edgeWindowDisplay
   ) {
     this.switchButtonsToDefaultMode(graph);
     this.setState({
+      edgeWindowDisplay,
       graph,
-      status: "none",
-      windowDisplay
+      newEdgeInfo: null,
+      status: "none"
     });
   }
 
@@ -210,9 +216,8 @@ class App extends Component {
           </button>
         </div>
         <EdgeWindow
-          display={this.state.windowDisplay}
-          data={this.state.windowData}
-          addEdge={this.addEdge}
+          display={this.state.edgeWindowDisplay}
+          sendCapacityAndFlow={this.addEdge}
         />
         <Canvas
           status={this.state.status}
