@@ -4,7 +4,7 @@ import EdgeWindowStyle from "./EdgeWindow.module.css";
 class EdgeWindow extends Component {
   constructor(props) {
     super(props);
-    this.createEdge = this.createEdge.bind(this);
+    this.parseDataAndSendToApp = this.parseDataAndSendToApp.bind(this);
   }
 
   parseDataAndSendToApp() {
