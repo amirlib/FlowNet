@@ -9,6 +9,7 @@ class App extends Component {
     super(props);
 
     this.tool = new gca();
+    this.addEdge = this.addEdge.bind(this);
     this.flowClick = this.flowClick.bind(this);
     this.newNodeClick = this.newNodeClick.bind(this);
     this.stopClick = this.stopClick.bind(this);
@@ -22,10 +23,10 @@ class App extends Component {
     };
   }
 
-  addEdgeStatus(from, to, capacity, flow) {
+  addEdge(edge) {
     const graph = this.state.graph.clone();
 
-    graph.addEdge(from, to, capacity, flow);
+    graph.addEdge(edge.from, edge.to, edge.capacity, edge.flow);
     this.switchToNoneStatusAndSetStates(graph, "none");
   }
 
@@ -175,14 +176,6 @@ class App extends Component {
 
   updateGraph(object) {
     switch (object.action) {
-      case "add-edge":
-        this.addEdgeStatus(
-          object.from,
-          object.to,
-          object.capacity,
-          object.flow
-        );
-        break;
       case "add-node":
         this.addNodeStatus(object.id);
         break;
@@ -219,7 +212,7 @@ class App extends Component {
         <EdgeWindow
           display={this.state.windowDisplay}
           data={this.state.windowData}
-          edgeFromWindow={this.updateGraph}
+          addEdge={this.addEdge}
         />
         <Canvas
           status={this.state.status}

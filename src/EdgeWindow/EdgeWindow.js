@@ -19,11 +19,10 @@ class EdgeWindow extends Component {
       from: this.props.data.from,
       to: this.props.data.to,
       capacity,
-      flow,
-      action: "add-edge"
+      flow
     };
 
-    this.props.edgeFromWindow(edge);
+    this.props.addEdge(edge);
   }
 
   render() {
